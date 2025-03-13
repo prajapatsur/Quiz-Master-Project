@@ -4,6 +4,7 @@ from app.forms import RegisterForm, LoginForm
 from app.models import User, Subject, Chapter, Quiz, Question, Score
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 # from app.models.chapter import Chapter
 # from app.models.question import Question
 # from app.models.quiz import Quiz
@@ -15,8 +16,31 @@ app=create_app()
 
 @app.cli.command("db-create")
 def create_db():
-    db.create_all()
-    print("Database created!")
+    try:
+        print("Creating database...")
+        db.create_all()
+        print("Database tables created successfully!")
+
+        # Creating admin user
+        admin = User.query.filter_by(username='admin@gmail.com').first()
+        if not admin:
+            print("Creating admin user...")
+            admin = User(
+                username="admin@gmail.com",
+                fullname="Admin",
+                qualification="BS",
+                dob=datetime.strptime("2002-03-30", "%Y-%m-%d").date()  # Convert string to date
+            )
+            admin.set_password("admin123")  
+            db.session.add(admin)
+            db.session.commit()
+            print("Admin created successfully!")
+        else:
+            print("Admin already exists!")
+
+    except Exception as e:
+        print(f"Error creating database: {e}")
+
 
 @login_manager.user_loader
 def load_user(user_id):
