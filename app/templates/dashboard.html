@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div>
+    {% if current_user.is_authenticated %}
+        <h1>Hi {{ current_user.fullname }}, Welcome to the Quiz Master!</h1>
+    {% endif %}
+</div>
+
+{% endblock content %}

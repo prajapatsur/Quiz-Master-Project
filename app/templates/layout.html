@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <link rel="stylesheet" href="style.css" />
+    <title>{% block title %}{% endblock %}</title>
+    {% endblock %}
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <ul>
+        <li><a href="home">Home</a></li>    
+        <!-- we will go to "http://127.0.0.1:5000/home" when we click on Home -->
+        {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('logout') }}">Logout</a></li> 
+        {% else %}
+            <li><a href="register">Register</a></li>    
+            <!-- we will go to "http://127.0.0.1.5000/register" when we click on Register -->
+            <li><a href="{{ url_for('login') }}">Login</a></li> 
+            <!-- similar will happen here -->
+        {% endif %}
+    </ul>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+    {% block footer %}
+    <br>
+    All rights reserved.<br>
+    &copy; Copyright 2008 by <a href="http://domain.invalid/">you</a>.
+    {% endblock %}
+    </div>
+</body>
+</html>

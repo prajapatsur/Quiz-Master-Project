@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}HomePage{% endblock %}
+
+{% block content %}
+<div>
+    {% if current_user.is_authenticated %}
+      Hi {{ current_user.name }}!
+    {% endif %}</div>
+<h1>Welcome to the Quiz Master!</h1>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block title %}LoginPage{% endblock %}
+
+{% block content %}
+<h1>Welcome to the Quiz Master!</h1>
+<p>Login here!</p>
+
+<form method="POST">
+    {{ form.hidden_tag()}}
+
+    <div>
+        {{ form.username.label }}
+        {{ form.username(size=50) }}
+        {% if form.username.errors %}
+        <ul class="errors">
+            {% for error in form.username.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <br>
+
+    <div>
+        {{ form.password.label }}
+        {{ form.password(size=50) }}
+        {% if form.password.errors %}
+        <ul class="errors">
+            {% for error in form.password.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <br>
+    <div>
+        {{ form.submit }}
+    </div>
+</form>
+{% endblock %}

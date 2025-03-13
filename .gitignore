@@ -1,0 +1,8 @@
+myenv
+instance
+__pycache__
+website
+app/models
+README.md
+.venv
+.git
