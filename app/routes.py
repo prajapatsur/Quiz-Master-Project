@@ -17,6 +17,7 @@ app=create_app()
 @app.cli.command("db-create")
 def create_db():
     try:
+        #creating database
         print("Creating database...")
         db.create_all()
         print("Database tables created successfully!")
@@ -36,10 +37,10 @@ def create_db():
             db.session.commit()
             print("Admin created successfully!")
         else:
-            print("Admin already exists!")
+            print("Admin already exists in the database.")
 
     except Exception as e:
-        print(f"Error creating database: {e}")
+        print(f"Error while creating database: {e}")
 
 
 @login_manager.user_loader
@@ -51,6 +52,7 @@ def load_user(user_id):
 def home():
     return render_template("home.html")
 
+#user login, Register, Logout
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form=LoginForm()
@@ -95,3 +97,24 @@ def logout():
     logout_user()
     flash("Logout Successful", category='success')
     return redirect(url_for('home'))
+
+
+#Admin Login
+@app.route("/admin/login", methods=['GET', 'POST'])
+def admin_login():
+    form= LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username="admin@gmail.com").first()
+        if user and user.username == form.username.data and user.check_password(form.password.data):
+            login_user(user)
+            flash("Admin login Successful", category='success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash("Invalid Username or Password", category="error")
+    return render_template("admin/login.html", form=form)
+
+#Admin Dashboard
+@app.route("/admin/dashboard")
+@login_required
+def admin_dashboard():
+    return render_template("admin/dashboard.html")
