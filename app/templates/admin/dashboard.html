@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block head %}
+<style>
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 5px;
+    }
+</style>
+
+{% endblock head %}
+
+
+
+{% block content %}
+    <h1>Dashboard</h1>
+    <p>Welcome to the Admin dashboard.</p>
+
+    <!-- We need to give user options to edit quiz stuffs -->
+     <div class="container">
+        <ul>
+            <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
+            <li><a href="{{ url_for('admin_manage_question') }}">Manage Questions</a></li>
+            <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
+            <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
+            <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
+        <div>
+            <p>Managements options used from sidebar.</p>
+        </div>
+     </div>
+{% endblock %}

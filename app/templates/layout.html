@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     {% block head %}
-    <link rel="stylesheet" href="style.css" />
+    <!-- <link rel="stylesheet" href="style.css" /> -->
     <title>{% block title %}{% endblock %}</title>
     {% endblock %}
 </head>
@@ -30,7 +30,9 @@
             <!-- similar will happen here -->
         {% endif %}
     </ul>
+
     <div id="content">{% block content %}{% endblock %}</div>
+    
     <div id="footer">
     {% block footer %}
     <br>

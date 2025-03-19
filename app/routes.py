@@ -117,4 +117,47 @@ def admin_login():
 @app.route("/admin/dashboard")
 @login_required
 def admin_dashboard():
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required to access admin dashboard.", category="error")
+        return render_template("home.html")
     return render_template("admin/dashboard.html")
+
+@app.route("/admin/manage_chapters")
+@login_required
+def admin_manage_chapter():
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required to manage Chapters.", category="error")
+        return render_template("home.html")
+    return render_template("admin/manage_chapters.html")
+
+@app.route("/admin/manage_questions")
+@login_required
+def admin_manage_question():
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required to Manage Questions.", category="error")
+        return render_template("home")
+    return render_template("admin/manage_questions.html")
+
+@app.route("/admin/manage_quizzes")
+@login_required
+def admin_manage_quiz():
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required to Manage Quiz.", category="error")
+        return render_template("home")
+    return render_template("admin/manage_quizzes.html")
+
+@app.route("/admin/manage_subjects")
+@login_required
+def admin_manage_subject():
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required to Manage Subjects.", category="error")
+        return render_template("home")
+    return render_template("admin/manage_subjects.html")
+
+@app.route("/admin/manage_users")
+@login_required
+def admin_manage_user():
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required to Manage Users.", category="error")
+        return render_template("home")
+    return render_template("admin/manage_users.html")
