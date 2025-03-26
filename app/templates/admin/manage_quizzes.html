@@ -1,1 +1,30 @@
-{% extends "layout.html" %}
+{% extends "admin/dashboard.html" %}
+{% block title %}Manage Quizzes{% endblock %}
+
+{% block content %}
+<h1>Manage Quizzes</h1>
+<table class="table table-striped">
+<thead>
+    <tr>
+        <th>Quiz ID</th>
+        <th>Quiz Date</th>
+        <th>Time Duration</th>
+        <th>Chapter ID</th>
+        <th>Actions</th>
+    </tr>
+</thead>
+<tbody>
+    {% for quiz in quizzes %}
+    <tr>
+        <td>{{ quiz.id }}</td>
+        <td>{{ quiz.date_of_quiz }}</td>
+        <td>{{ quiz.time_duration }}</td>
+        <td>{{ quiz.chapter_id }}</td>
+        <td>
+            <a href="{{ url_for('admin.edit_quiz', quiz_id=quiz.quiz_id) }}" class="btn btn-primary">Edit</a>
+            <a href="{{ url_for('admin.delete_quiz', quiz_id=quiz.quiz_id) }}" class="btn btn-danger">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+{% endblock content %}

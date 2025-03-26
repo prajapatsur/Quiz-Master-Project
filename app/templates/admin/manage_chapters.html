@@ -1,1 +1,31 @@
-{% extends "layout.html" %}
+{% extends "admin/dashboard.html" %}
+
+{% block content %}
+<h1>Manage Chapters</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Chapter ID</th>
+            <th>Chapter Name</th>
+            <th>Subject ID</th>
+            <th>Subject Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for chapter in chapters %}
+        <tr>
+            <td>{{ chapter.chapter_id }}</td>
+            <td>{{ chapter.chapter_name }}</td>
+            <td>{{ chapter.subject_id }}</td>
+            <td>{{ chapter.subject_name }}</td>
+            <td>
+                <a href="{{ url_for('admin.edit_chapter', chapter_id=chapter.chapter_id) }}" class="btn btn-primary">Edit</a>
+                <a href="{{ url_for('admin.delete_chapter', chapter_id=chapter.chapter_id) }}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}

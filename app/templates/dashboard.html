@@ -3,10 +3,40 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+
 <div>
-    {% if current_user.is_authenticated %}
-        <h1>Hi {{ current_user.fullname }}, Welcome to the Quiz Master!</h1>
-    {% endif %}
+{% if current_user.is_authenticated %}
+    <h1>Hi {{ current_user.fullname }}, Welcome to the User Dashboard!</h1>
+{% endif %}
+</div>
+
+<div>
+<h5>You can attempt any quiz based on your interest from the list:</h5>
+    {% for quiz in quizzes %}
+    <table>
+        <thead>
+            <tr>
+
+                <th>Name</th>
+                <th>Date of Quiz</th>
+                <th>Time Duration</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in quizzes %}
+            <tr>
+                <td>{{ quiz.name }}</td>
+                <td>{{ quiz.date_of_quiz }}</td>
+                <td>{{ quiz.time_duration / 60 }} Minutes</td>
+                <td>
+                    <a href="{{ url_for('attempt_quiz', quiz_id=quiz.id) }}">Attempt</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endfor %}    
 </div>
 
 {% endblock content %}

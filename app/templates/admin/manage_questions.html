@@ -1,1 +1,32 @@
-{% extends "layout.html" %}
+{% extends "admin/dashboard.html" %}
+
+{% block content %}
+<h1>Manage Questions</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Question</th>
+            <th>Correct Option</th>
+            <th>Quiz Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for question in questions %}
+        <tr>
+            <td>{{ question.id }}</td>
+            <td>{{ question.question_statement }}</td>
+            <td>{{ question.correct_option }}</td>
+            <td>{{ question.quiz_id }}</td>    
+            <!-- I want to put quiz name here instead of quiz id -->
+            <td>
+                <a href="{{ url_for('admin.edit_question', question_id=question.question_id) }}" class="btn btn-primary">Edit</a>
+                <a href="{{ url_for('admin.delete_question', question_id=question.question_id) }}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('admin.add_question') }}" class="btn btn-success">Add Question</a>
+{% endblock content %}
