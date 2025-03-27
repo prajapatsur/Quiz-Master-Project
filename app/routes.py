@@ -94,7 +94,8 @@ def dashboard():
     # return render_template("dashboard.html", username=username)    #used with session['username']
 
     quizzes= Quiz.query.all()
-    return render_template("dashboard.html", quizzes=quizzes)
+    subjects= Subject.query.all()
+    return render_template("dashboard.html", quizzes=quizzes, subjects=subjects)
 
 @app.route("/logout")
 @login_required
@@ -125,7 +126,8 @@ def admin_dashboard():
     if current_user.username != "admin@gmail.com":
         flash("Permission required to access admin dashboard.", category="error")
         return render_template("home.html")
-    return render_template("admin/dashboard.html")
+    quizzes= Quiz.query.all()
+    return render_template("admin/dashboard.html", quizzes=quizzes)
 
 @app.route("/admin/manage_chapters")
 @login_required

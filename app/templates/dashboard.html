@@ -11,6 +11,28 @@
 </div>
 
 <div>
+    <h3>List of Subjects:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject ID</th>
+                    <th>Subject Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in subjects %}
+                <tr>
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.name }}</td>
+                    <td>{{ s.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+<br>
+<div>
 <h3>List of Quizzes:</h3>
     <table>
         <thead>

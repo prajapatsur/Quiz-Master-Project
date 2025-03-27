@@ -52,3 +52,8 @@
     </table>
     <a href="{{ url_for('admin_add_subject') }}">Add Subject</a>
 {% endblock content %}
+
+{% block footer %}
+<br>
+<a href="{{ url_for('admin_dashboard') }}">Back</a>
+{% endblock footer %}

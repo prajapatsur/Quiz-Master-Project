@@ -1,46 +1,35 @@
 {% extends "layout.html" %}
 {% block title %}Manage Users{% endblock %}
 
-{% block head %}
-    <style>
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 5px;
-        }
-    </style>
-{% endblock head %}
-
-{% block header2 %} 
-    <div class="container">
-        <ul>
-            <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
-            <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
-            <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
-            <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
-    </div>
-{% endblock header2 %}
-
 {% block content %}
 <h1>Manage Users</h1>
-<table class="table table-striped">
+<table>
     <thead>
         <tr>
             <th>User ID</th>
             <th>Username</th>
             <th>Full Name</th>
-            <!-- <th>Actions</th> -->
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for user in users %}
+        {% if user.username!="admin@gmail.com" %}
         <tr>
             <td>{{ user.id }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.fullname }}</td>
-
+            <td>
+                <a href="#">Edit</a>
+                <a href="#">Delete</a>
+            </td>
+        {% endif %}
         </tr>
         {% endfor %}
     </tbody>
 {% endblock content %}
+
+{% block footer %}
+<br>
+<a href="{{ url_for('admin_dashboard') }}">Back</a>
+{% endblock footer %}

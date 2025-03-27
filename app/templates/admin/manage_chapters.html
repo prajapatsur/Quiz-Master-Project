@@ -1,27 +1,6 @@
 {% extends "layout.html" %}
 {% block title %}Manage Chapters{% endblock %}
 
-{% block head %}
-    <style>
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 5px;
-        }
-    </style>
-{% endblock head %}
-
-{% block header2 %} 
-    <div class="container">
-        <ul>
-            <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
-            <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
-            <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
-            <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
-    </div>
-{% endblock header2 %}
-
 {% block content %}
 <h1>Manage Chapters</h1>
 <table class="table table-striped">
@@ -51,5 +30,10 @@
 </table>
 
 <a href="{{ url_for('admin_add_chapter') }}">Add Chapter</a>
-
+<br>
 {% endblock content %}
+
+{% block footer %}
+<br>
+<a href="{{ url_for('admin_dashboard') }}">Back</a>
+{% endblock footer %}

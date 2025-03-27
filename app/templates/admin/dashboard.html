@@ -18,12 +18,43 @@
 
 {% block content %}
     <h1>Welcome to Admin Dashboard</h1>
-    <!-- We need to give user options to edit quiz stuffs -->
     <div class="container">
         <ul>
             <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
             <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
             <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
             <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
+    </div>
+
+    <div>
+        <h3>List of Quizzes:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quiz ID</th>
+                        <th>Quiz Name</th>
+                        <th>Date of Quiz</th>
+                        <th>Time Duration</th>
+                        <th>Attempt</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quiz in quizzes %}
+                    <tr>
+                        <td>{{ quiz.id }}</td>
+                        <td>{{ quiz.name }}</td>
+                        <td>{{ quiz.date_of_quiz }}</td>
+                        <td>{{ quiz.time_duration}} Minutes</td>
+                        <td>
+                            <a href="{{ url_for('attempt_quiz', qid=quiz.id) }}">Attempt</a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('quiz_result', qid=quiz.id, user_id=current_user.id)}}">Result</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
     </div>
 {% endblock %}

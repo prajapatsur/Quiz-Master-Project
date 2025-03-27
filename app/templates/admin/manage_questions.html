@@ -51,3 +51,9 @@
 <br>
 <a href="{{ url_for('admin_add_question', qid=quiz.id) }}">Add Question</a>
 {% endblock content %}
+
+{% block footer %}
+<div>
+    <a href="{{ url_for('admin_manage_quiz') }}">Back</a>
+</div>
+{% endblock footer %}
