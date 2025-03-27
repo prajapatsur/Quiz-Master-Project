@@ -1,14 +1,15 @@
 {% extends "layout.html" %}
 {% block title %}Attempt Quiz: {{quiz.name}}{% endblock %}
+
 {% block content %}
 <h2>{{quiz.name}}</h2>
-
+<h4>Hello {{user.fullname}}</h4>
 <form method="post">
     <div>
         {% for question in questions %}
         <div>
-            <h5>Q:{{ question.question_statement }}</h5>
-            <h6>Choose answer:</h6>
+            <h3>Q:{{ question.question_statement }}</h3>
+            <h7>Choose answer:</h7>
             <div>
                 <input type="radio" name="question_{{ question.id }}" value="1">
                 <label>{{ question.option1 }}</label>
@@ -28,6 +29,6 @@
         </div>
         {% endfor %}
     </div>
-    <button type="submit">Submit Quiz</button>
+    <button type="submit">Submit</button>
 </form>
 {% endblock %}

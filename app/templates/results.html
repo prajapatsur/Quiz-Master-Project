@@ -1,16 +1,16 @@
 {% extends "layout.html" %}
-{% block title %}Quiz {{quiz.id}} Result{% endblock %}
+
+{% block title %}All results{% endblock title %}
 
 {% block content %}
-<h2>Quiz Results</h2>
-<h3>Welcome {{user.fullname}}</h3>
+<h3>Hello {{ current_user.fullname }}</h3>
+<h4>Your all results</h4>
 
 <div>
     <table>
         <thead>
             <tr>
                 <th>Quiz ID</th>
-                <th>Quiz name</th>
                 <th>Attempt ID</th>
                 <th>Score</th>
             </tr>
@@ -18,13 +18,14 @@
         <tbody>
             {% for s in score %}
             <tr>
-                <td>{{ quiz.id }}</td>
-                <td>{{ quiz.name }}</td>
-                <td>{{ s.id }}</td>
-                <td>{{ s.total_scored }}</td>
+                {% if s.user_id==current_user.id %}
+                    <td>{{ s.quiz_id }}</td>
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.total_scored }}</td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-{% endblock %}
+{% endblock content %}

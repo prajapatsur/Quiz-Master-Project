@@ -19,7 +19,7 @@
     {% endwith %}
 
     <ul>
-        <li><a href="home">Home</a></li>    
+        <li><a href="{{ url_for('home') }}">Home</a></li>    
         <!-- we will go to "http://127.0.0.1:5000/home" when we click on Home -->
         {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('logout') }}">Logout</a></li> 

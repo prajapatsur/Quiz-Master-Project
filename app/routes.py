@@ -90,10 +90,11 @@ def register():
 @app.route("/dashboard", methods=['GET'])
 @login_required
 def dashboard():
-    username = session.get('username', 'User')  # Retrieve username from session
+    # username = session.get('username', 'User')  # Retrieve username from session
     # return render_template("dashboard.html", username=username)    #used with session['username']
 
-    return render_template("dashboard.html")
+    quizzes= Quiz.query.all()
+    return render_template("dashboard.html", quizzes=quizzes)
 
 @app.route("/logout")
 @login_required
@@ -394,3 +395,46 @@ def admin_edit_quiz_question(qid, question_id):
         return redirect(url_for('admin_manage_quiz_question', qid=qid))
     
     return render_template("admin/edit_question.html", form=form, quiz=quiz)
+
+
+
+@app.route("/quiz/<int:qid>", methods=['GET', 'POST'])
+@login_required
+def attempt_quiz(qid):
+    quiz= Quiz.query.get_or_404(qid)
+    Questions= quiz.questions
+    user= User.query.get_or_404(current_user.id)
+    if request.method=='POST':
+        score=0
+        for question in Questions:
+            user_answer= request.form.get(f"question_{question.id}")
+            if user_answer and int(user_answer)==question.correct_option:
+                score= score+1   #for correct option user will get +1
+            
+        user_score= Score(
+            total_scored= score,
+            quiz_id= qid,
+            user_id= current_user.id
+        )
+
+        db.session.add(user_score)
+        db.session.commit()
+        flash(f"Your score is {score}", category="success")
+        return redirect(url_for("quiz_result", qid= qid, user_id= current_user.id))
+    return render_template("attempt_quiz.html", quiz=quiz, questions=Questions, user=user)    
+
+@app.route("/quiz_results/<int:qid>/<int:user_id>")
+@login_required
+def quiz_result(qid, user_id):
+    quiz= Quiz.query.get_or_404(qid)
+    user= User.query.get_or_404(user_id)
+    #I could print the whole scores in that quiz by the same user.
+    scores= Score.query.filter_by(quiz_id= qid, user_id= user_id)
+    return render_template("quiz_result.html", quiz= quiz, score=scores, user=user)
+
+@app.route("/results/<int:user_id>")
+@login_required
+def results(user_id):
+    scores= Score.query.filter_by(user_id=user_id)
+    return render_template("results.html", score=scores)
+    
