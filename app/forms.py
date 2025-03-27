@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateField, SubmitField, BooleanField, TextAreaField, SelectField, IntegerField
+from wtforms import StringField, PasswordField, DateField,DateTimeLocalField, SubmitField, BooleanField, TextAreaField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, EqualTo
 
 #user registration form
@@ -27,7 +27,7 @@ class SubjectForm(FlaskForm):
     submit= SubmitField('Add Subject')
 
 #chapter form
-class ChapterFOrm(FlaskForm):
+class ChapterForm(FlaskForm):
     name= StringField('Chapter Name', validators=[DataRequired()])
     description = TextAreaField('Description')
     subject_id= SelectField('Subject', coerce=int, validators=[DataRequired()])
@@ -35,7 +35,8 @@ class ChapterFOrm(FlaskForm):
 
 #quiz form
 class QuizForm(FlaskForm):
-    date_of_quiz= DateField('Date of Quiz', format="%Y-%m-%d %H:%M", validators=[DataRequired()])
+    name= StringField('Quiz Name', validators=[DataRequired()])
+    date_of_quiz= DateTimeLocalField('Date of Quiz', validators=[DataRequired()])
     time_duration= IntegerField('Time Duration (in minutes)', validators=[DataRequired()])
     chapter_id= SelectField('Chapter', coerce=int, validators=[DataRequired()])
     submit= SubmitField('Add Quiz')

@@ -17,19 +17,13 @@
 
 
 {% block content %}
-    <h1>Dashboard</h1>
-    <p>Welcome to the Admin dashboard.</p>
-
+    <h1>Welcome to Admin Dashboard</h1>
     <!-- We need to give user options to edit quiz stuffs -->
-     <div class="container">
+    <div class="container">
         <ul>
             <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
-            <li><a href="{{ url_for('admin_manage_question') }}">Manage Questions</a></li>
             <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
             <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
             <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
-        <div>
-            <p>Managements options used from sidebar.</p>
-        </div>
-     </div>
+    </div>
 {% endblock %}

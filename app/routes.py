@@ -64,6 +64,8 @@ def login():
         elif user and user.check_password(form.password.data):
             login_user(user)
             flash("Login Successful", category='success')
+            if user.username=="admin@gmail.com":
+                return redirect(url_for('admin_dashboard'))
             return redirect(url_for('dashboard'))
     return render_template("login.html", form=form)
 
@@ -84,11 +86,13 @@ def register():
         return redirect(url_for('login'))
     return render_template("register.html", form=form)
 
+#dashboard
 @app.route("/dashboard", methods=['GET'])
 @login_required
 def dashboard():
     username = session.get('username', 'User')  # Retrieve username from session
     # return render_template("dashboard.html", username=username)    #used with session['username']
+
     return render_template("dashboard.html")
 
 @app.route("/logout")
@@ -131,14 +135,27 @@ def admin_manage_chapter():
     chapters= Chapter.query.all()
     return render_template("admin/manage_chapters.html", chapters=chapters)
 
-@app.route("/admin/manage_questions")
+# @app.route("/admin/manage_questions")
+# @login_required
+# def admin_manage_question():
+#     if current_user.username != "admin@gmail.com":
+#         flash("Permission required to Manage Questions.", category="error")
+#         return render_template("home")
+#     all_questions= Question.query.all()
+#     return render_template("admin/manage_questions.html", questions=all_questions)
+
+#Managing Questions of particular quiz only. 
+@app.route("/admin/manage_quiz_questions/<int:qid>")
 @login_required
-def admin_manage_question():
+def admin_manage_quiz_question(qid):
     if current_user.username != "admin@gmail.com":
         flash("Permission required to Manage Questions.", category="error")
         return render_template("home")
-    questions= Question.query.all()
-    return render_template("admin/manage_questions.html", questions=questions)
+    
+    #fetching quiz
+    quiz= Quiz.query.get_or_404(qid)
+    all_questions= quiz.questions
+    return render_template("admin/manage_questions.html", questions=all_questions, quiz=quiz)
 
 @app.route("/admin/manage_quizzes")
 @login_required
@@ -206,7 +223,7 @@ def admin_edit_subject(id):
         return redirect(url_for('admin_manage_subject'))
     return render_template("admin/edit_subject.html", form=form)
 
-@app.route("/admin/delete_subject/<int:id>", methods=['POST'])
+@app.route("/admin/delete_subject/<int:id>", methods=['POST', 'GET'])
 @login_required
 def admin_delete_subject(id):
     if current_user.username != "admin@gmail.com":
@@ -228,6 +245,7 @@ def admin_add_chapter():
         flash("Permission required to Add Chapter.", category="error")
         return redirect(url_for('home'))
     
+    form.subject_id.choices = [(sub.id, sub.name) for sub in Subject.query.all()]
     if form.validate_on_submit():
         chapter= Chapter(
                 name= form.name.data,
@@ -249,24 +267,130 @@ def admin_edit_chapter(id):
         return redirect(url_for("home"))
     chapter = Chapter.query.get_or_404(id)
     form = ChapterForm(obj=chapter)
-    form.subject_id.choices = [(s.id, s.name) for s in Subject.query.all()]
+    form.subject_id.choices = [(sub.id, sub.name) for sub in Subject.query.all()]
     if form.validate_on_submit():
         chapter.name = form.name.data
         chapter.description = form.description.data
         chapter.subject_id = form.subject_id.data
         db.session.commit()
         flash("Chapter updated successfully!", category="success")
-        return redirect(url_for("admin_manage_chapters"))
+        return redirect(url_for("admin_manage_chapter"))
     return render_template("admin/edit_chapter.html", form=form)
 
-@app.route("/admin/delete_chapter/<int:id>", methods=['POST'])
+@app.route("/admin/delete_chapter/<int:id>", methods=['GET','POST'])    #I realised that this get is needed here
 @login_required
 def admin_delete_chapter(id):
     if current_user.username != "admin@gmail.com":
-        flash("You don't have permission to access this page", category="error")
+        flash("Permission required to delete chapter!", category="error")
         return redirect(url_for("home"))
     chapter = Chapter.query.get_or_404(id)
     db.session.delete(chapter)
     db.session.commit()
     flash("Chapter deleted successfully!", category="success")
-    return redirect(url_for("admin_manage_chapters"))
+    return redirect(url_for("admin_manage_chapter"))
+
+
+#add, edit and delete quiz
+@app.route("/admin/add_quiz", methods=['GET', 'POST'])
+@login_required
+def admin_add_quiz():
+    if current_user.username!= "admin@gmail.com":
+        flash("Permission required to Add Quiz.", category="error")
+        return redirect(url_for('home'))
+    form= QuizForm()
+    form.chapter_id.choices= [(c.id, c.name) for c in Chapter.query.all()]
+    if form.validate_on_submit():
+         quiz= Quiz(
+             name= form.name.data,
+             date_of_quiz= form.date_of_quiz.data,
+             time_duration= form.time_duration.data,
+             chapter_id= form.chapter_id.data
+         )
+         db.session.add(quiz)
+         db.session.commit()
+         flash("Quiz added!", category='success')
+         return redirect(url_for('admin_manage_quiz'))
+    return render_template("admin/add_quiz.html", form=form)
+
+@app.route("/admin/edit_quiz/<int:id>", methods=['GET', 'POST'])
+@login_required
+def admin_edit_quiz(id):
+    if current_user.username!= "admin@gmail.com":
+        flash("Permission required to Edit Quiz.", category="error")
+        return redirect(url_for('home'))
+    
+    quiz= Quiz.query.get_or_404(id)
+    form= QuizForm(obj=quiz)
+    form.chapter_id.choices= [(c.id, c.name) for c in Chapter.query.all()]
+    if form.validate_on_submit():
+        quiz.name= form.name.data
+        quiz.date_of_quiz= form.date_of_quiz.data
+        quiz.time_duration= form.time_duration.data
+        quiz.chapter_id= form.chapter_id.data
+        db.session.commit()
+        flash("Quiz updated!", category='success')
+        return redirect(url_for('admin_manage_quiz'))
+    return render_template("admin/edit_quiz.html", form=form)
+
+@app.route("/admin/delete_quiz/<int:id>", methods=['POST','GET'])
+@login_required
+def admin_delete_quiz(id):
+    if current_user.username!= "admin@gmail.com":
+        flash("Permission required to Add Quiz.", category="error")
+        return redirect(url_for('home'))
+    quiz= Quiz.query.get_or_404(id)
+    db.session.delete(quiz)
+    db.session.commit()
+    flash("Quiz deleted!", category='success')
+    return redirect(url_for('admin_manage_quiz'))
+
+#add, edit and delete questions of specific quiz
+#qid stands for 'quiz_id'
+@app.route("/admin/add_question/<int:qid>", methods=['GET', 'POST'])
+@login_required
+def admin_add_question(qid):
+    if current_user.username!="admin@gmail.com":
+        flash('Permission required!', category='error')
+        return redirect(url_for("home"))
+    
+    form= QuestionForm()
+    if form.validate_on_submit():
+        question = Question(
+            question_statement=form.question_statement.data,
+            option1=form.option1.data,
+            option2=form.option2.data,
+            option3=form.option3.data,
+            option4=form.option4.data,
+            correct_option=form.correct_option.data,
+            quiz_id=qid
+        )
+        db.session.add(question)
+        db.session.commit()
+        flash(f"Question added successully to Quiz-id {qid}", category="success")
+        return redirect(url_for('admin_manage_quiz_question', qid=qid))
+    quiz= Quiz.query.get_or_404(qid)
+    return render_template("admin/add_question.html", form=form, quiz= quiz)
+
+@app.route("/admin/edit_quiz_question/<int:qid>/<int:question_id>")
+@login_required
+def admin_edit_quiz_question(qid, question_id):
+    if current_user.username!="admin@gmail.com":
+        flash('Permission required!', category='error')
+        return redirect(url_for("home"))
+    
+    quiz= Quiz.query.get_or_404(qid)
+    question= Question.query.get_or_404(question_id)
+    form= QuestionForm(obj= question)
+    if form.validate_on_submit:
+        question.question_statement= form.question_statement.data
+        question.option1= form.option1.data
+        question.option2= form.option2.data
+        question.option3= form.option3.data
+        question.option4= form.option4.data
+        question.correct_option= form.correct_option.data
+        question.quiz_id= qid
+        db.session.commit()
+        flash("Quiz questions updated!", category='success')
+        return redirect(url_for('admin_manage_quiz_question', qid=qid))
+    
+    return render_template("admin/edit_question.html", form=form, quiz=quiz)

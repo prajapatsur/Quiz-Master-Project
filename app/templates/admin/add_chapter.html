@@ -1,7 +1,42 @@
-{% extends "admin/dashboard.html" %}
+{% extends "layout.html" %}
+{% block title %}Add Chapter{% endblock title %}
 
-{% block title %}Add Chapter{% endblock %}
-{% block crud %}
+{% block head %}
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
+            gap: 10px;
+            padding: 5px;
+        }
+
+        .container ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: left;
+        }
+
+        .container li {
+            margin-right: 10px;
+        }
+    </style>
+{% endblock head %}
+
+{% block header2 %}
+    <div class="container">
+        <ul>
+            <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
+            <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
+            <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
+            <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
+        </ul>
+    </div>
+{% endblock header2 %}
+
+{% block content %}
 <h2>Add Chapter</h2>
 <form method="post">
     {{ form.hidden_tag() }}
@@ -42,4 +77,4 @@
         {{ form.submit }}
     </div>
 </form>
-{% endblock %}
+{% endblock content %}

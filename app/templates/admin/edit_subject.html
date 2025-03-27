@@ -1,6 +1,27 @@
-{% extends "admin/dashboard.html" %}
+{% extends "layout.html" %}
 {% block title %}Edit Subject{% endblock %}
-{% block crud %}
+
+{% block head %}
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 5px;
+        }
+    </style>
+{% endblock head %}
+
+{% block header2 %} 
+    <div class="container">
+        <ul>
+            <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
+            <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
+            <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
+            <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
+    </div>
+{% endblock header2 %}
+{% block content %}
 <h2>Edit Subject</h2>
 <form method="post">
     {{ form.hidden_tag() }}

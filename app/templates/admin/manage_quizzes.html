@@ -1,12 +1,34 @@
-{% extends "admin/dashboard.html" %}
-{% block title %}Manage Quizzes{% endblock %}
+{% extends "layout.html" %}
+{% block title %}Manage Quiz{% endblock %}
+
+{% block head %}
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 5px;
+        }
+    </style>
+{% endblock head %}
+
+{% block header2 %} 
+    <div class="container">
+        <ul>
+            <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
+            <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
+            <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
+            <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
+    </div>
+{% endblock header2 %}
 
 {% block content %}
 <h1>Manage Quizzes</h1>
-<table class="table table-striped">
+<table>
 <thead>
     <tr>
-        <th>Quiz ID</th>
+        <th>ID</th>
+        <th>Name</th>
         <th>Quiz Date</th>
         <th>Time Duration</th>
         <th>Chapter ID</th>
@@ -17,14 +39,19 @@
     {% for quiz in quizzes %}
     <tr>
         <td>{{ quiz.id }}</td>
+        <td>{{ quiz.name }}</td>
         <td>{{ quiz.date_of_quiz }}</td>
         <td>{{ quiz.time_duration }}</td>
         <td>{{ quiz.chapter_id }}</td>
         <td>
-            <a href="{{ url_for('admin.edit_quiz', quiz_id=quiz.quiz_id) }}" class="btn btn-primary">Edit</a>
-            <a href="{{ url_for('admin.delete_quiz', quiz_id=quiz.quiz_id) }}" class="btn btn-danger">Delete</a>
+            <a href="{{ url_for('admin_edit_quiz', id=quiz.id) }}">Edit</a><br>
+            <a href="{{ url_for('admin_delete_quiz', id=quiz.id) }}">Delete</a><br>
+            <a href="{{ url_for('admin_manage_quiz_question', qid= quiz.id) }}">Questions</a>
         </td>
     </tr>
     {% endfor %}
 </tbody>
+<div>
+<a href="{{ url_for('admin_add_quiz') }}">Add Quiz</a>
+</div>
 {% endblock content %}

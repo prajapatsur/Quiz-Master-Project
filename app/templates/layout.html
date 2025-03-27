@@ -3,8 +3,8 @@
 <head>
     {% block head %}
     <!-- <link rel="stylesheet" href="style.css" /> -->
-    <title>{% block title %}{% endblock %}</title>
     {% endblock %}
+    <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
 
@@ -31,14 +31,10 @@
         {% endif %}
     </ul>
 
+    <div id="header">{% block header2 %}{% endblock %}</div>
+
     <div id="content">{% block content %}{% endblock %}</div>
     
-    <div id="footer">
-    {% block footer %}
-    <br>
-    All rights reserved.<br>
-    &copy; Copyright 2008 by <a href="http://domain.invalid/">you</a>.
-    {% endblock %}
-    </div>
+    <div id="footer">{% block footer %}{% endblock %}</div>
 </body>
 </html>

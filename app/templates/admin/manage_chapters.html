@@ -1,31 +1,55 @@
-{% extends "admin/dashboard.html" %}
+{% extends "layout.html" %}
+{% block title %}Manage Chapters{% endblock %}
+
+{% block head %}
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 5px;
+        }
+    </style>
+{% endblock head %}
+
+{% block header2 %} 
+    <div class="container">
+        <ul>
+            <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
+            <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
+            <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
+            <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
+    </div>
+{% endblock header2 %}
 
 {% block content %}
 <h1>Manage Chapters</h1>
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Chapter ID</th>
-            <th>Chapter Name</th>
-            <th>Subject ID</th>
-            <th>Subject Name</th>
+            <th>ID</th>
+            <th>Chapter-Name</th>
+            <th>Description</th>
+            <th>Subject-ID</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for chapter in chapters %}
         <tr>
-            <td>{{ chapter.chapter_id }}</td>
-            <td>{{ chapter.chapter_name }}</td>
+            <td>{{ chapter.id }}</td>
+            <td>{{ chapter.name }}</td>
+            <td>{{ chapter.description }}</td>
             <td>{{ chapter.subject_id }}</td>
-            <td>{{ chapter.subject_name }}</td>
             <td>
-                <a href="{{ url_for('admin.edit_chapter', chapter_id=chapter.chapter_id) }}" class="btn btn-primary">Edit</a>
-                <a href="{{ url_for('admin.delete_chapter', chapter_id=chapter.chapter_id) }}" class="btn btn-danger">Delete</a>
+                <a href="{{ url_for('admin_edit_chapter', id=chapter.id) }}">Edit</a>
+                <a href="{{ url_for('admin_delete_chapter', id=chapter.id) }}">Delete</a>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<a href="{{ url_for('admin_add_chapter') }}">Add Chapter</a>
 
 {% endblock content %}
