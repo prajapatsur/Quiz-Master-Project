@@ -24,20 +24,31 @@
             </tr>
             <tr>
                 <td>Average Score</td>
-                <td>{{ average_score }}</td>
+                <td>{{ average_score|round(3) }}</td>
             </tr>
         </tbody>
     </table>
 </div>
 
+<br>
+
+<div>
+    <form method="POST">
+        <input type="text" name="query" placeholder="Search Subject" value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
 <div>
     <h3>List of Subjects:</h3>
+
         <table>
             <thead>
                 <tr>
                     <th>Subject ID</th>
                     <th>Subject Name</th>
                     <th>Description</th>
+                    <th>Chapters</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,14 +57,15 @@
                     <td>{{ s.id }}</td>
                     <td>{{ s.name }}</td>
                     <td>{{ s.description }}</td>
+                    <td><a href="{{ url_for('view_chapters', sid=s.id)}}">Chapters</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
+</div>
 <br>
 <div>
-<h3>List of Quizzes:</h3>
+    <h3>List of Quizzes:</h3>
     <table>
         <thead>
             <tr>
@@ -85,7 +97,35 @@
 </div>
 
 <div>
+    <h3>List of all Chapters</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Chapter-Name</th>
+                <th>Description</th>
+                <th>Quizzes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for chapter in chapters %}
+            <tr>
+                <td>{{ chapter.id }}</td>
+                <td>{{ chapter.name }}</td>
+                <td>{{ chapter.description }}</td>
+                <td>
+                    <a href="{{ url_for('view_quizzes', cid=chapter.id) }}">Quizzes</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div>
     <a href="{{ url_for('results', user_id=current_user.id) }}">All Results</a>
+    <br>
+    <a href="{{ url_for('select_quiz') }}">Select Quiz</a>
 </div>
 
 {% endblock content %}

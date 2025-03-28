@@ -1,19 +1,14 @@
 {% extends "layout.html" %}
-{% block title %}Manage Chapters{% endblock %}
+{% block title %}Admin View Chapters{% endblock %}
 
 {% block content %}
-<h1>Manage All Chapters</h1>
-<form method="POST">
-    <input type="text" name="query" placeholder="Search Chapter" value="{{ query }}">
-    <button type="submit">Search</button>
-</form>
+<h1>Chapters for Subject-ID {{sid}}</h1>
 <table>
     <thead>
         <tr>
             <th>ID</th>
             <th>Chapter-Name</th>
             <th>Description</th>
-            <th>Subject-ID</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -23,7 +18,6 @@
             <td>{{ chapter.id }}</td>
             <td>{{ chapter.name }}</td>
             <td>{{ chapter.description }}</td>
-            <td>{{ chapter.subject_id }}</td>
             <td>
                 <a href="{{ url_for('admin_edit_chapter', id=chapter.id) }}">Edit</a>
                 <br>
@@ -42,5 +36,5 @@
 
 {% block footer %}
 <br>
-<a href="{{ url_for('admin_dashboard') }}">Back</a>
+<a href="{{ url_for('admin_manage_subject') }}">Back</a>
 {% endblock footer %}

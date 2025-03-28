@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}Select Quiz{% endblock title %}
+
+{% block content %}
+<h1>List of all Quizzes</h1>
+<form method="post">
+    <div>
+        <label for="subject_id">Select Subject</label>
+        <select id="subject_id" name="subject_id">
+            <option value="">--Select Subject--</option>
+            {% for s in subjects %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="chapter_id">Select Chapter</label>
+        <select id="chapter_id" name="chapter_id">
+            <option value="">--Select Chapter--</option>
+            {% for c in chapters %}
+            <option value="{{ c.id }}" data-subject-id="{{ c.subject_id }}">{{ c.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit">Filter Quizzes</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Quiz ID</th>
+            <th>Quiz Name</th>
+            <th>Date of Quiz</th>
+            <th>Time Duration</th>
+            <th>Attempt</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for quiz in quizzes %}
+        <tr>
+            <td>{{ quiz.id }}</td>
+            <td>{{ quiz.name }}</td>
+            <td>{{ quiz.date_of_quiz }}</td>
+            <td>{{ quiz.time_duration}} Minutes</td>
+            <td>
+                <a href="{{ url_for('attempt_quiz', qid=quiz.id) }}">Attempt</a>
+            </td>
+            <td>
+                <a href="{{ url_for('quiz_result', qid=quiz.id, user_id=current_user.id)}}">Result</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
+
+{% block footer %}
+<br>
+<a href="{{ url_for('dashboard') }}">Back</a>
+<script>
+    document.getElementById('subject_id').addEventListener('change', function () {
+        subjectId = this.value;
+        chapters = document.querySelectorAll('#chapter_id option')
+
+        chapters.forEach(option => {
+            if (option.dataset.subjectId == subjectId || option.value == "") {
+                option.style.display = "block";
+            } else {
+                option.style.display = "none";
+            }
+        });
+    })
+</script>
+{% endblock footer %}

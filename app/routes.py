@@ -5,6 +5,7 @@ from app.models import User, Subject, Chapter, Quiz, Question, Score
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy import or_, and_
 # from app.models.chapter import Chapter
 # from app.models.question import Question
 # from app.models.quiz import Quiz
@@ -87,7 +88,7 @@ def register():
     return render_template("register.html", form=form)
 
 #User_dashboard
-@app.route("/dashboard", methods=['GET'])
+@app.route("/dashboard", methods=['GET','POST'])
 @login_required
 def dashboard():
     # username = session.get('username', 'User')  # Retrieve username from session
@@ -95,19 +96,51 @@ def dashboard():
 
     quizzes= Quiz.query.all()
     subjects= Subject.query.all()
+    chapters= Chapter.query.all()
     scores= Score.query.filter_by(user_id=current_user.id).all()
     total_attempted_quizzes= len(scores)
     if total_attempted_quizzes>0:
         average_score= sum([s.total_scored for s in scores])/total_attempted_quizzes
     else:
         average_score= 0
+
+    #search feature
+    query= request.form.get("query","")
+    if request.method=="POST":
+        subjects= Subject.query.filter(Subject.name.ilike(f"%{query}%")).all()
+        quizzes= Quiz.query.filter(Quiz.name.ilike(f'%{query}%')).all()
+        chapters= Chapter.query.filter(or_(Chapter.name.ilike(f'%{query}%'), Chapter.description.ilike(f'%{query}%'))).all()
     return render_template("dashboard.html",
                            quizzes=quizzes,
                            subjects=subjects,
+                           chapters=chapters,
                            scores=scores,
                            total_attempted_quizzes=total_attempted_quizzes,
                            average_score=average_score)
 
+#User Chapter view for specific subject-id
+@app.route("/view_chapters/<int:sid>", methods=['POST','GET'])
+@login_required
+def view_chapters(sid):
+    chapters= Chapter.query.filter_by(subject_id=sid)
+    query= request.form.get("query","")
+
+    if request.method=="POST":
+        chapters= Chapter.query.filter(and_(Chapter.subject_id==sid),or_(Chapter.name.ilike(f"%{query}%"),Chapter.description.ilike(f"%{query}%"))).all()
+    return render_template("view_chapters.html", chapters=chapters, sid=sid)
+
+#User Quiz View for specific chapter-id
+@app.route("/view_quiz/<int:cid>", methods=['GET','POST'])
+@login_required
+def view_quizzes(cid):
+    quizzes= Quiz.query.filter_by(chapter_id=cid)
+
+    query= request.form.get("query","")
+    if request.method=="POST":
+        quizzes= Quiz.query.filter(and_(Quiz.chapter_id==cid), Quiz.name.ilike(f"%{query}%")).all()
+    return render_template("view_quizzes.html", quizzes=quizzes, cid=cid)
+
+#user logout
 @app.route("/logout")
 @login_required
 def logout():
@@ -140,23 +173,62 @@ def admin_dashboard():
     quizzes= Quiz.query.all()
     return render_template("admin/dashboard.html", quizzes=quizzes)
 
-@app.route("/admin/manage_chapters")
+#Admin Manages
+@app.route("/admin/manage_subjects", methods=['GET','POST'])
+@login_required
+def admin_manage_subject():
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required to Manage Subjects.", category="error")
+        return render_template("home")
+    subjects= Subject.query.all()
+
+    query= request.form.get("query","")
+
+    if request.method=="POST":
+        subjects= Subject.query.filter(or_(Subject.name.ilike(f"%{query}%"), Subject.description.ilike(f"%{query}%"))).all()
+
+    return render_template("admin/manage_subjects.html", subjects=subjects, query=query)
+
+@app.route("/admin/manage_chapters", methods=['GET','POST'])
 @login_required
 def admin_manage_chapter():
     if current_user.username != "admin@gmail.com":
         flash("Permission required to manage Chapters.", category="error")
         return render_template("home.html")
     chapters= Chapter.query.all()
+
+    query= request.form.get("query","")
+
+    if request.method=="POST":
+        chapters= Chapter.query.filter(or_(Chapter.name.ilike(f"%{query}%"),Chapter.description.ilike(f"%{query}%"),Chapter.subject_id.ilike(f"%{query}%"))).all()
     return render_template("admin/manage_chapters.html", chapters=chapters)
 
-# @app.route("/admin/manage_questions")
-# @login_required
-# def admin_manage_question():
-#     if current_user.username != "admin@gmail.com":
-#         flash("Permission required to Manage Questions.", category="error")
-#         return render_template("home")
-#     all_questions= Question.query.all()
-#     return render_template("admin/manage_questions.html", questions=all_questions)
+@app.route("/admin/manage_quizzes", methods=['GET','POST'])
+@login_required
+def admin_manage_quiz():
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required to Manage Quiz.", category="error")
+        return render_template("home")
+    quizzes= Quiz.query.all()
+    query= request.form.get("query","")
+
+    if request.method=="POST":
+        quizzes= Quiz.query.filter(or_(Quiz.name.ilike(f"%{query}%"), Quiz.chapter_id.ilike(f"%{query}%"))).all()
+    return render_template("admin/manage_quizzes.html", quizzes=quizzes)
+
+@app.route("/admin/manage_users", methods=['GET','POST'])
+@login_required
+def admin_manage_user():
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required to Manage Users.", category="error")
+        return render_template("home")
+    users= User.query.all()
+
+    query= request.form.get("query","")
+
+    if request.method=="POST":
+        users= User.query.filter(or_(User.fullname.ilike(f"%{query}%"), User.username.ilike(f"%{query}%"))).all()
+    return render_template("admin/manage_users.html", users=users)
 
 #Managing Questions of particular quiz only. 
 @app.route("/admin/manage_quiz_questions/<int:qid>")
@@ -171,34 +243,24 @@ def admin_manage_quiz_question(qid):
     all_questions= quiz.questions
     return render_template("admin/manage_questions.html", questions=all_questions, quiz=quiz)
 
-@app.route("/admin/manage_quizzes")
+#subject ke pas chapter pe click karke yaha redirect ho jayenge and subject specific chapters dekh payenge
+@app.route("/admin/view_chapter/<int:sid>")
 @login_required
-def admin_manage_quiz():
+def admin_view_chapter(sid):
     if current_user.username != "admin@gmail.com":
-        flash("Permission required to Manage Quiz.", category="error")
-        return render_template("home")
-    quizzes= Quiz.query.all()
-    return render_template("admin/manage_quizzes.html", quizzes=quizzes)
+        flash("Permission required!", category="error")
+        return render_template("home.html")
+    chapters= Chapter.query.filter_by(subject_id=sid)
+    return render_template("admin/admin_view_chapter.html", chapters=chapters, sid=sid)
 
-@app.route("/admin/manage_subjects")
+@app.route("/admin/view_quiz/<int:cid>")
 @login_required
-def admin_manage_subject():
+def admin_view_quiz(cid):
     if current_user.username != "admin@gmail.com":
-        flash("Permission required to Manage Subjects.", category="error")
-        return render_template("home")
-    subjects= Subject.query.all()
-
-    return render_template("admin/manage_subjects.html", subjects=subjects)
-
-@app.route("/admin/manage_users")
-@login_required
-def admin_manage_user():
-    if current_user.username != "admin@gmail.com":
-        flash("Permission required to Manage Users.", category="error")
-        return render_template("home")
-    users= User.query.all()
-    return render_template("admin/manage_users.html", users=users)
-
+        flash("Permission required!", category="error")
+        return render_template("home.html")
+    quizzes= Quiz.query.filter_by(chapter_id=cid)
+    return render_template("admin/admin_view_quiz.html", cid=cid, quizzes=quizzes)
 
 #add, edit and delete subject
 @app.route("/admin/add_subject", methods=['GET', 'POST'])
@@ -445,7 +507,7 @@ def quiz_result(qid, user_id):
     scores= Score.query.filter_by(quiz_id= qid, user_id= user_id)
     return render_template("quiz_result.html", quiz= quiz, score=scores, user=user)
 
-@app.route("/results/<int:user_id>")
+@app.route("/results/<int:user_id>", methods=['GET','POST'])
 @login_required
 def results(user_id):
     scores= Score.query.filter_by(user_id=user_id).all()
@@ -460,3 +522,26 @@ def results(user_id):
                            average_score=average_score
                         )
     
+
+@app.route("/quiz", methods=['GET','POST'])
+@login_required
+def select_quiz():
+    subjects = Subject.query.all()
+    chapters = Chapter.query.all()
+    quizzes = Quiz.query.all()
+
+    if request.method == 'POST':
+        subject_id = request.form.get('subject_id')
+        chapter_id = request.form.get('chapter_id')
+
+        if subject_id:
+            quizzes = Quiz.query.join(Chapter).filter(Chapter.subject_id == subject_id).all()
+        if chapter_id:
+            quizzes = Quiz.query.filter_by(chapter_id=chapter_id).all()
+
+    return render_template("all_quiz.html",
+                        subjects=subjects,
+                        chapters=chapters,
+                        quizzes=quizzes
+                    )
+

@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block title %}View Chapters{% endblock %}
+
+{% block content %}
+<h1>Chapters for Subject-ID {{sid}}</h1>
+<form method="POST">
+    <input type="text" name="query" placeholder="Search Quiz" value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Chapter-Name</th>
+            <th>Description</th>
+            <th>Quizzes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for chapter in chapters %}
+        <tr>
+            <td>{{ chapter.id }}</td>
+            <td>{{ chapter.name }}</td>
+            <td>{{ chapter.description }}</td>
+            <td>
+                <a href="{{ url_for('view_quizzes', cid=chapter.id) }}">Quizzes</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+{% endblock content %}
+
+{% block footer %}
+<br>
+<a href="{{ url_for('dashboard') }}">Back</a>
+{% endblock footer %}
