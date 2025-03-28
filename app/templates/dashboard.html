@@ -11,6 +11,26 @@
 </div>
 
 <div>
+    <h3>Progress Summary</h3>
+    <table>
+        <tbody>
+            <tr>
+                <td>Total Attempted Quizzes</td>
+                {% if total_attempted_quizzes>0 %}
+                <td>{{ total_attempted_quizzes }}</td>
+                {% else %}
+                <td>You didn't attempted any quiz.</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>Average Score</td>
+                <td>{{ average_score }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
     <h3>List of Subjects:</h3>
         <table>
             <thead>

@@ -86,7 +86,7 @@ def register():
         return redirect(url_for('login'))
     return render_template("register.html", form=form)
 
-#dashboard
+#User_dashboard
 @app.route("/dashboard", methods=['GET'])
 @login_required
 def dashboard():
@@ -95,7 +95,18 @@ def dashboard():
 
     quizzes= Quiz.query.all()
     subjects= Subject.query.all()
-    return render_template("dashboard.html", quizzes=quizzes, subjects=subjects)
+    scores= Score.query.filter_by(user_id=current_user.id).all()
+    total_attempted_quizzes= len(scores)
+    if total_attempted_quizzes>0:
+        average_score= sum([s.total_scored for s in scores])/total_attempted_quizzes
+    else:
+        average_score= 0
+    return render_template("dashboard.html",
+                           quizzes=quizzes,
+                           subjects=subjects,
+                           scores=scores,
+                           total_attempted_quizzes=total_attempted_quizzes,
+                           average_score=average_score)
 
 @app.route("/logout")
 @login_required
@@ -437,6 +448,15 @@ def quiz_result(qid, user_id):
 @app.route("/results/<int:user_id>")
 @login_required
 def results(user_id):
-    scores= Score.query.filter_by(user_id=user_id)
-    return render_template("results.html", score=scores)
+    scores= Score.query.filter_by(user_id=user_id).all()
+    total_attempted_quizzes= len(scores)
+    if total_attempted_quizzes>0:
+        average_score= sum([s.total_scored for s in scores])/total_attempted_quizzes
+    else:
+        average_score= 0
+    return render_template("results.html",
+                           score=scores,
+                           total_attempted_quizzes=total_attempted_quizzes,
+                           average_score=average_score
+                        )
     

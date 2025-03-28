@@ -4,14 +4,35 @@
 
 {% block content %}
 <h3>Hello {{ current_user.fullname }}</h3>
-<h4>Your all results</h4>
+<div>
+    <h3>Progress Summary</h3>
+    <table>
+        <tbody>
+            <tr>
+                <td>Total Attempted Quizzes</td>
+                {% if total_attempted_quizzes>0 %}
+                <td>{{ total_attempted_quizzes }}</td>
+                {% else %}
+                <td>You didn't attempted any quiz.</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>Average Score</td>
+                <td>{{ average_score|round(3) }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 <div>
+    <h3>All Quiz Results</h3>
     <table>
         <thead>
             <tr>
                 <th>Quiz ID</th>
-                <th>Attempt ID</th>
+                <th>Quiz Name</th>
+                <!-- <th>Attempt ID</th> -->
+                <th>Attempt Duration</th>
                 <th>Score</th>
             </tr>
         </thead>
@@ -20,7 +41,9 @@
             <tr>
                 {% if s.user_id==current_user.id %}
                     <td>{{ s.quiz_id }}</td>
-                    <td>{{ s.id }}</td>
+                    <td>{{s.quiz.name}}</td>
+                    <!-- <td>{{ s.id }}</td> -->
+                    <td>{{s.timestamp}}</td>
                     <td>{{ s.total_scored }}</td>
                 {% endif %}
             </tr>
