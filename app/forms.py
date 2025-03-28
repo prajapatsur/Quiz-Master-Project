@@ -49,4 +49,4 @@ class QuestionForm(FlaskForm):
      option3 = StringField('Option 3', validators=[DataRequired()])
      option4 = StringField('Option 4', validators=[DataRequired()])
      correct_option = IntegerField('Correct Option (1-4)', validators=[DataRequired()])
-     submit = SubmitField('Add Question')
+     submit = SubmitField('Submit')

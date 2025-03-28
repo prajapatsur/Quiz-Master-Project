@@ -4,7 +4,11 @@
 
 {% block content %}
 <h1>List of all Quizzes</h1>
-<form method="post">
+<form method="POST">
+    <input type="text" name="query" placeholder="Search Quiz" value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+<!-- <form method="post">
     <div>
         <label for="subject_id">Select Subject</label>
         <select id="subject_id" name="subject_id">
@@ -24,7 +28,7 @@
         </select>
     </div>
     <button type="submit">Filter Quizzes</button>
-</form>
+</form> -->
 
 <table>
     <thead>
@@ -58,8 +62,10 @@
 
 {% block footer %}
 <br>
-<a href="{{ url_for('dashboard') }}">Back</a>
-<script>
+<span><a href="{{ url_for('results', user_id=current_user.id) }}">All Results</a></span>
+<br>
+<span><a href="{{ url_for('dashboard') }}">Back</a></span>
+<!-- <script>
     document.getElementById('subject_id').addEventListener('change', function () {
         subjectId = this.value;
         chapters = document.querySelectorAll('#chapter_id option')
@@ -72,5 +78,5 @@
             }
         });
     })
-</script>
+</script> -->
 {% endblock footer %}

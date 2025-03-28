@@ -11,6 +11,13 @@
 </div>
 
 <div>
+    <form method="POST">
+        <input type="text" name="query" placeholder="Search" value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div>
     <h3>Progress Summary</h3>
     <table>
         <tbody>
@@ -31,13 +38,6 @@
 </div>
 
 <br>
-
-<div>
-    <form method="POST">
-        <input type="text" name="query" placeholder="Search Subject" value="{{ query }}">
-        <button type="submit">Search</button>
-    </form>
-</div>
 
 <div>
     <h3>List of Subjects:</h3>

@@ -5,7 +5,7 @@
 {% block content %}
  <h1>Quiz: {{ quiz.name }}</h1>
  <h2>Edit Question</h2>
- <form method="post">
+ <form method="POST">
      {{ form.hidden_tag() }}
      <div>
          {{ form.question_statement.label }}

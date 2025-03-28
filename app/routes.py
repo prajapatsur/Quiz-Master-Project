@@ -6,6 +6,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy import or_, and_
+from datetime import datetime, timedelta
 # from app.models.chapter import Chapter
 # from app.models.question import Question
 # from app.models.quiz import Quiz
@@ -447,7 +448,7 @@ def admin_add_question(qid):
     quiz= Quiz.query.get_or_404(qid)
     return render_template("admin/add_question.html", form=form, quiz= quiz)
 
-@app.route("/admin/edit_quiz_question/<int:qid>/<int:question_id>")
+@app.route("/admin/edit_quiz_question/<int:qid>/<int:question_id>", methods=['GET','POST'])
 @login_required
 def admin_edit_quiz_question(qid, question_id):
     if current_user.username!="admin@gmail.com":
@@ -457,7 +458,7 @@ def admin_edit_quiz_question(qid, question_id):
     quiz= Quiz.query.get_or_404(qid)
     question= Question.query.get_or_404(question_id)
     form= QuestionForm(obj= question)
-    if form.validate_on_submit:
+    if form.validate_on_submit():
         question.question_statement= form.question_statement.data
         question.option1= form.option1.data
         question.option2= form.option2.data
@@ -471,7 +472,19 @@ def admin_edit_quiz_question(qid, question_id):
     
     return render_template("admin/edit_question.html", form=form, quiz=quiz)
 
-
+@app.route("/admin/delete_quiz_question/<int:qid>/<int:question_id>", methods=['GET','POST'])
+@login_required
+def admin_delete_quiz_question(qid, question_id):
+    if current_user.username!="admin@gmail.com":
+        flash('Permission required!', category='error')
+        return redirect(url_for("home"))
+    
+    quiz= Quiz.query.get_or_404(qid)
+    question= Question.query.get_or_404(question_id)
+    db.session.delete(question)
+    db.session.commit()
+    flash("Question deleted!", category='success')
+    return redirect(url_for('admin_manage_quiz_question', qid=qid))
 
 @app.route("/quiz/<int:qid>", methods=['GET', 'POST'])
 @login_required
@@ -479,6 +492,16 @@ def attempt_quiz(qid):
     quiz= Quiz.query.get_or_404(qid)
     Questions= quiz.questions
     user= User.query.get_or_404(current_user.id)
+
+    current_time = datetime.now()
+    start_time = quiz.date_of_quiz
+    end_time = start_time + timedelta(minutes=quiz.time_duration)
+
+    # Check if current time is within the allowed time window
+    if not (start_time <= current_time <= end_time):
+        flash(f"Quiz is only available between {start_time} and {end_time}.", category="error")
+        return redirect(url_for("dashboard"))
+
     if request.method=='POST':
         score=0
         for question in Questions:
@@ -530,15 +553,18 @@ def select_quiz():
     chapters = Chapter.query.all()
     quizzes = Quiz.query.all()
 
-    if request.method == 'POST':
-        subject_id = request.form.get('subject_id')
-        chapter_id = request.form.get('chapter_id')
+    # if request.method == 'POST':
+    #     subject_id = request.form.get('subject_id')
+    #     chapter_id = request.form.get('chapter_id')
 
-        if subject_id:
-            quizzes = Quiz.query.join(Chapter).filter(Chapter.subject_id == subject_id).all()
-        if chapter_id:
-            quizzes = Quiz.query.filter_by(chapter_id=chapter_id).all()
+    #     if subject_id:
+    #         quizzes = Quiz.query.join(Chapter).filter(Chapter.subject_id == subject_id).all()
+    #     if chapter_id:
+    #         quizzes = Quiz.query.filter_by(chapter_id=chapter_id).all()
 
+    query= request.form.get("query","")
+    if request.method=="POST":
+        quizzes= Quiz.query.filter(Quiz.name.ilike(f"%{query}%")).all()
     return render_template("all_quiz.html",
                         subjects=subjects,
                         chapters=chapters,

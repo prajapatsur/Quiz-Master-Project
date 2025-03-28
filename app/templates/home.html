@@ -6,9 +6,14 @@
 <h1>Welcome to the Quiz Master!</h1>
 {% if current_user.is_authenticated %}
 <div>
-    <a href="{{ url_for('dashboard') }}">User Dashboard</a>
+    {% if current_user.username == "admin@gmail.com" %}
+        <a href="{{url_for('admin_dashboard')}}">Admin Dashboard</a>
+    {% else %}
+        <a href="{{ url_for('dashboard') }}">User Dashboard</a>
+        <a href="{{ url_for('select_quiz') }}">Select Quiz</a>
+    {% endif %}
     <br>
-    <a href="{{ url_for('select_quiz') }}">Select Quiz</a>
+
 </div>
 {% endif %}
 {% endblock %}
