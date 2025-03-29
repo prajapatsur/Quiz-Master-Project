@@ -4,5 +4,5 @@ __pycache__
 website
 app/models
 README.md
-.venv
+.env
 .git

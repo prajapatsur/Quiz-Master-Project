@@ -2,64 +2,55 @@
 {% block title %}Manage Subject{% endblock %}
 
 {% block head %}
-    <style>
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 5px;
-        }
-    </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 {% endblock head %}
 
+
 {% block header2 %} 
-    <div class="container">
-        <ul>
-            <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
-            <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
-            <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
-            <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
+    <div class="taskbar">
+        <a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a>
+        <a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a>
+        <a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a>
+        <a href="{{ url_for('admin_manage_user') }}">Manage Users</a>
     </div>
 {% endblock header2 %}
 
 {% block content %}
-    <h1>Manage Subjects</h1>
-    <form method="POST">
-        <input type="text" name="query" placeholder="Search Subject" value="{{ query }}">
-        <button type="submit">Search</button>
-    </form>
-    <table >
-        <thead>
-            <tr>
-                <th>Subject-ID</th>
-                <th>Subject-Name</th>
-                <th>Description</th>
-                <th>Actions</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            {% for subject in subjects %}
-                <tr>
-                    <td>{{ subject.id }}</td>
-                    <td>{{ subject.name }}</td>
-                    <td>{{ subject.description }}</td>
-                    <td>
-                        <a href="{{ url_for('admin_edit_subject', id=subject.id) }}">Edit</a>
-                        <br>
-                        <a href="{{ url_for('admin_delete_subject', id=subject.id) }}">Delete</a>
-                        <br>
-                        <a href="{{ url_for('admin_view_chapter',sid=subject.id)}}">Chapters</a>
-                    </td>
-                    
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{{ url_for('admin_add_subject') }}">Add Subject</a>
+  <h1>Manage Subjects</h1>
+  <form method="POST">
+    <input type="text" name="query" placeholder="Search Subject" value="{{ query }}">
+    <button type="submit">Search</button>
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <th>Subject-ID</th>
+        <th>Subject-Name</th>
+        <th>Description</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for subject in subjects %}
+        <tr>
+          <td>{{ subject.id }}</td>
+          <td>{{ subject.name }}</td>
+          <td>{{ subject.description }}</td>
+          <td>
+            <a href="{{ url_for('admin_edit_subject', id=subject.id) }}">Edit</a>
+            <a href="{{ url_for('admin_delete_subject', id=subject.id) }}">Delete</a>
+            <a href="{{ url_for('admin_view_chapter', sid=subject.id) }}">Chapters</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
 {% endblock content %}
 
 {% block footer %}
-<br>
-<a href="{{ url_for('admin_dashboard') }}">Back</a>
+  <div class="footer-links">
+    <a href="{{ url_for('admin_add_subject') }}">Add Subject</a>
+    <a href="{{ url_for('admin_dashboard') }}">Back</a>
+  </div>
 {% endblock footer %}

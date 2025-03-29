@@ -1,38 +1,42 @@
 {% extends "layout.html" %}
-{% block title %}Add Question{% endblock %}
+{% block title %}Manage Question{% endblock %}
 
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock head %}
 
 {% block content %}
-<h1>Manage Questions for Quiz: {{ quiz.name }}</h1>
-<table>
+  <h1>Manage Questions for Quiz: {{ quiz.name }}</h1>
+  <table>
     <thead>
-        <tr>
-            <th>Question ID</th>
-            <th>Question</th>
-            <th>Correct Option</th>
-            <th>Action</th>
-        </tr>
+      <tr>
+        <th>Question ID</th>
+        <th>Question</th>
+        <th>Correct Option</th>
+        <th>Action</th>
+      </tr>
     </thead>
     <tbody>
-        {% for question in questions %}
+      {% for question in questions %}
         <tr>
-            <td>{{ question.id }}</td>
-            <td>{{ question.question_statement }}</td>
-            <td>{{ question.correct_option }}</td>
-            <td>
-                <a href="{{ url_for('admin_edit_quiz_question', qid=quiz.id, question_id= question.id)}}">Edit</a>
-                <a href="{{ url_for('admin_delete_quiz_question', qid=quiz.id, question_id= question.id)}}">Delete</a>
-            </td>
+          <td>{{ question.id }}</td>
+          <td>{{ question.question_statement }}</td>
+          <td>{{ question.correct_option }}</td>
+          <td>
+            <a href="{{ url_for('admin_edit_quiz_question', qid=quiz.id, question_id=question.id) }}">Edit</a>
+            <a href="{{ url_for('admin_delete_quiz_question', qid=quiz.id, question_id=question.id) }}">Delete</a>
+          </td>
         </tr>
-        {% endfor %}
+      {% endfor %}
     </tbody>
-</table>
-<br>
-<a href="{{ url_for('admin_add_question', qid=quiz.id) }}">Add Question</a>
+  </table>
+  <br>
+
 {% endblock content %}
 
 {% block footer %}
-<div>
+  <div class="footer-links">
+    <a href="{{ url_for('admin_add_question', qid=quiz.id) }}">Add Question</a>
     <a href="{{ url_for('admin_manage_quiz') }}">Back</a>
-</div>
+  </div>
 {% endblock footer %}

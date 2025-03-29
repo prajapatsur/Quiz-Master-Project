@@ -7,6 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy import or_, and_
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+import os
 # from app.models.chapter import Chapter
 # from app.models.question import Question
 # from app.models.quiz import Quiz
@@ -14,7 +16,16 @@ from datetime import datetime, timedelta
 # from app.models.subject import Subject
 # from app.models.user import User
 
-app=create_app()
+load_dotenv()
+
+app = create_app()
+
+# Ensure login manager is properly initialized
+login_manager.init_app(app)
+            
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
 
 @app.cli.command("db-create")
 def create_db():
@@ -25,16 +36,16 @@ def create_db():
         print("Database tables created successfully!")
 
         # Creating admin user
-        admin = User.query.filter_by(username='admin@gmail.com').first()
+        admin = User.query.filter_by(username=os.getenv('admin_username')).first()
         if not admin:
             print("Creating admin user...")
             admin = User(
-                username="admin@gmail.com",
-                fullname="Admin",
-                qualification="BS",
+                username=os.getenv('admin_username'),
+                fullname=os.getenv('admin_fullname'),
+                qualification=os.getenv('admin_qualification'),
                 dob=datetime.strptime("2002-03-30", "%Y-%m-%d").date()  # Convert string to date
             )
-            admin.set_password("admin123")  
+            admin.set_password(os.getenv('admin_password'))  
             db.session.add(admin)
             db.session.commit()
             print("Admin created successfully!")
@@ -45,9 +56,6 @@ def create_db():
         print(f"Error while creating database: {e}")
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(user_id)
 
 @app.route("/")
 @app.route("/home")
@@ -66,7 +74,7 @@ def login():
         elif user and user.check_password(form.password.data):
             login_user(user)
             flash("Login Successful", category='success')
-            if user.username=="admin@gmail.com":
+            if user.username==os.getenv('admin_username'):
                 return redirect(url_for('admin_dashboard'))
             return redirect(url_for('dashboard'))
     return render_template("login.html", form=form)
@@ -155,7 +163,7 @@ def logout():
 def admin_login():
     form= LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username="admin@gmail.com").first()
+        user = User.query.filter_by(username=os.getenv('admin_username')).first()
         if user and user.username == form.username.data and user.check_password(form.password.data):
             login_user(user)
             flash("Admin login Successful", category='success')
@@ -168,7 +176,7 @@ def admin_login():
 @app.route("/admin/dashboard")
 @login_required
 def admin_dashboard():
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to access admin dashboard.", category="error")
         return render_template("home.html")
     quizzes= Quiz.query.all()
@@ -188,6 +196,12 @@ def admin_dashboard():
            completion_rate = 0
         average_scores.append(average_score)
         completion_rates.append(completion_rate)
+
+    #search feature
+    query= request.form.get("query","")
+    if request.method=="POST":
+        quizzes= Quiz.query.filter(or_(Quiz.name.ilike(f"%{query}%"), Quiz.chapter_id.ilike(f"%{query}%"))).all()
+
     return render_template("admin/dashboard.html",
                            quizzes=quizzes,
                            quiz_names=quiz_names,
@@ -199,7 +213,7 @@ def admin_dashboard():
 @app.route("/admin/manage_subjects", methods=['GET','POST'])
 @login_required
 def admin_manage_subject():
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to Manage Subjects.", category="error")
         return render_template("home")
     subjects= Subject.query.all()
@@ -214,7 +228,7 @@ def admin_manage_subject():
 @app.route("/admin/manage_chapters", methods=['GET','POST'])
 @login_required
 def admin_manage_chapter():
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to manage Chapters.", category="error")
         return render_template("home.html")
     chapters= Chapter.query.all()
@@ -228,7 +242,7 @@ def admin_manage_chapter():
 @app.route("/admin/manage_quizzes", methods=['GET','POST'])
 @login_required
 def admin_manage_quiz():
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to Manage Quiz.", category="error")
         return render_template("home")
     quizzes= Quiz.query.all()
@@ -241,7 +255,7 @@ def admin_manage_quiz():
 @app.route("/admin/manage_users", methods=['GET','POST'])
 @login_required
 def admin_manage_user():
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to Manage Users.", category="error")
         return render_template("home")
     users= User.query.all()
@@ -256,7 +270,7 @@ def admin_manage_user():
 @app.route("/admin/manage_quiz_questions/<int:qid>")
 @login_required
 def admin_manage_quiz_question(qid):
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to Manage Questions.", category="error")
         return render_template("home")
     
@@ -269,7 +283,7 @@ def admin_manage_quiz_question(qid):
 @app.route("/admin/view_chapter/<int:sid>")
 @login_required
 def admin_view_chapter(sid):
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required!", category="error")
         return render_template("home.html")
     chapters= Chapter.query.filter_by(subject_id=sid)
@@ -278,7 +292,7 @@ def admin_view_chapter(sid):
 @app.route("/admin/view_quiz/<int:cid>")
 @login_required
 def admin_view_quiz(cid):
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required!", category="error")
         return render_template("home.html")
     quizzes= Quiz.query.filter_by(chapter_id=cid)
@@ -287,7 +301,7 @@ def admin_view_quiz(cid):
 @app.route("/admin/view_result/<int:qid>")
 @login_required
 def admin_view_result(qid):
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required!", category="error")
         return render_template("home.html")
     results= Score.query.filter_by(quiz_id=qid).all()
@@ -299,7 +313,7 @@ def admin_view_result(qid):
 @login_required
 def admin_add_subject():
     form=SubjectForm()
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to Add Subject.", category="error")
         return redirect(url_for('home'))
     if form.validate_on_submit():
@@ -317,7 +331,7 @@ def admin_add_subject():
 @app.route("/admin/edit_subject/<int:id>", methods=['GET', 'POST'])
 @login_required
 def admin_edit_subject(id):
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to Edit Subject.", category="error")
         return redirect(url_for('home'))
     
@@ -334,7 +348,7 @@ def admin_edit_subject(id):
 @app.route("/admin/delete_subject/<int:id>", methods=['POST', 'GET'])
 @login_required
 def admin_delete_subject(id):
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to Delete Subject.", category="error")
         return redirect(url_for('home'))
     
@@ -349,7 +363,7 @@ def admin_delete_subject(id):
 @login_required
 def admin_add_chapter():
     form=ChapterForm()
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to Add Chapter.", category="error")
         return redirect(url_for('home'))
     
@@ -370,7 +384,7 @@ def admin_add_chapter():
 @app.route("/admin/edit_chapter/<int:id>", methods=['GET', 'POST'])
 @login_required
 def admin_edit_chapter(id):
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("You don't have permission to access this page", category="error")
         return redirect(url_for("home"))
     chapter = Chapter.query.get_or_404(id)
@@ -388,7 +402,7 @@ def admin_edit_chapter(id):
 @app.route("/admin/delete_chapter/<int:id>", methods=['GET','POST'])    #I realised that this get is needed here
 @login_required
 def admin_delete_chapter(id):
-    if current_user.username != "admin@gmail.com":
+    if current_user.username != os.getenv('admin_username'):
         flash("Permission required to delete chapter!", category="error")
         return redirect(url_for("home"))
     chapter = Chapter.query.get_or_404(id)
@@ -402,7 +416,7 @@ def admin_delete_chapter(id):
 @app.route("/admin/add_quiz", methods=['GET', 'POST'])
 @login_required
 def admin_add_quiz():
-    if current_user.username!= "admin@gmail.com":
+    if current_user.username!= os.getenv('admin_username'):
         flash("Permission required to Add Quiz.", category="error")
         return redirect(url_for('home'))
     form= QuizForm()
@@ -423,7 +437,7 @@ def admin_add_quiz():
 @app.route("/admin/edit_quiz/<int:id>", methods=['GET', 'POST'])
 @login_required
 def admin_edit_quiz(id):
-    if current_user.username!= "admin@gmail.com":
+    if current_user.username!= os.getenv('admin_username'):
         flash("Permission required to Edit Quiz.", category="error")
         return redirect(url_for('home'))
     
@@ -443,7 +457,7 @@ def admin_edit_quiz(id):
 @app.route("/admin/delete_quiz/<int:id>", methods=['POST','GET'])
 @login_required
 def admin_delete_quiz(id):
-    if current_user.username!= "admin@gmail.com":
+    if current_user.username!= os.getenv('admin_username'):
         flash("Permission required to Add Quiz.", category="error")
         return redirect(url_for('home'))
     quiz= Quiz.query.get_or_404(id)
@@ -457,7 +471,7 @@ def admin_delete_quiz(id):
 @app.route("/admin/add_question/<int:qid>", methods=['GET', 'POST'])
 @login_required
 def admin_add_question(qid):
-    if current_user.username!="admin@gmail.com":
+    if current_user.username!=os.getenv('admin_username'):
         flash('Permission required!', category='error')
         return redirect(url_for("home"))
     
@@ -482,7 +496,7 @@ def admin_add_question(qid):
 @app.route("/admin/edit_quiz_question/<int:qid>/<int:question_id>", methods=['GET','POST'])
 @login_required
 def admin_edit_quiz_question(qid, question_id):
-    if current_user.username!="admin@gmail.com":
+    if current_user.username!=os.getenv('admin_username'):
         flash('Permission required!', category='error')
         return redirect(url_for("home"))
     
@@ -506,7 +520,7 @@ def admin_edit_quiz_question(qid, question_id):
 @app.route("/admin/delete_quiz_question/<int:qid>/<int:question_id>", methods=['GET','POST'])
 @login_required
 def admin_delete_quiz_question(qid, question_id):
-    if current_user.username!="admin@gmail.com":
+    if current_user.username!=os.getenv('admin_username'):
         flash('Permission required!', category='error')
         return redirect(url_for("home"))
     
@@ -637,7 +651,7 @@ def get_quizzes():
 @app.route("/api/score")
 @login_required
 def get_scores():
-    if current_user.username=="admin@gmail.com":
+    if current_user.username==os.getenv('admin_username'):
         scores= Score.query.all()
         score_list=[]
         for s in scores:
