@@ -289,6 +289,7 @@ def admin_view_chapter(sid):
     chapters= Chapter.query.filter_by(subject_id=sid)
     return render_template("admin/admin_view_chapter.html", chapters=chapters, sid=sid)
 
+#admin_view_quiz--> Admin can view quizzes for specific chapter
 @app.route("/admin/view_quiz/<int:cid>")
 @login_required
 def admin_view_quiz(cid):
@@ -307,6 +308,31 @@ def admin_view_result(qid):
     results= Score.query.filter_by(quiz_id=qid).all()
     quiz= Quiz.query.filter_by(id=qid).first()
     return render_template("admin/admin_view_result.html", scores=results, quiz=quiz)
+
+@app.route("/quiz_results/<int:qid>/<int:user_id>")
+@login_required
+def quiz_result(qid, user_id):
+    quiz= Quiz.query.get_or_404(qid)
+    user= User.query.get_or_404(user_id)
+    #I could print the whole scores in that quiz by the same user.
+    scores= Score.query.filter_by(quiz_id= qid, user_id= user_id)
+    return render_template("quiz_result.html", quiz= quiz, score=scores, user=user)
+
+#Result of user
+@app.route("/results/<int:user_id>", methods=['GET','POST'])
+@login_required
+def results(user_id):
+    scores= Score.query.filter_by(user_id=user_id).all()
+    total_attempted_quizzes= len(scores)
+    if total_attempted_quizzes>0:
+        average_score= sum([s.total_scored for s in scores])/total_attempted_quizzes
+    else:
+        average_score= 0
+    return render_template("results.html",
+                           score=scores,
+                           total_attempted_quizzes=total_attempted_quizzes,
+                           average_score=average_score
+                        )
 
 #add, edit and delete subject
 @app.route("/admin/add_subject", methods=['GET', 'POST'])
@@ -531,6 +557,7 @@ def admin_delete_quiz_question(qid, question_id):
     flash("Question deleted!", category='success')
     return redirect(url_for('admin_manage_quiz_question', qid=qid))
 
+#Attempt Quiz
 @app.route("/quiz/<int:qid>", methods=['GET', 'POST'])
 @login_required
 def attempt_quiz(qid):
@@ -566,31 +593,9 @@ def attempt_quiz(qid):
         return redirect(url_for("quiz_result", qid= qid, user_id= current_user.id))
     return render_template("attempt_quiz.html", quiz=quiz, questions=Questions, user=user)    
 
-@app.route("/quiz_results/<int:qid>/<int:user_id>")
-@login_required
-def quiz_result(qid, user_id):
-    quiz= Quiz.query.get_or_404(qid)
-    user= User.query.get_or_404(user_id)
-    #I could print the whole scores in that quiz by the same user.
-    scores= Score.query.filter_by(quiz_id= qid, user_id= user_id)
-    return render_template("quiz_result.html", quiz= quiz, score=scores, user=user)
 
-@app.route("/results/<int:user_id>", methods=['GET','POST'])
-@login_required
-def results(user_id):
-    scores= Score.query.filter_by(user_id=user_id).all()
-    total_attempted_quizzes= len(scores)
-    if total_attempted_quizzes>0:
-        average_score= sum([s.total_scored for s in scores])/total_attempted_quizzes
-    else:
-        average_score= 0
-    return render_template("results.html",
-                           score=scores,
-                           total_attempted_quizzes=total_attempted_quizzes,
-                           average_score=average_score
-                        )
     
-
+#User Select Quiz 
 @app.route("/quiz", methods=['GET','POST'])
 @login_required
 def select_quiz():
@@ -619,7 +624,6 @@ def select_quiz():
 
 #API Endpoints
 @app.route("/api/subject")
-@login_required
 def get_subjects():
     subjects= Subject.query.all()
     subject_list=[]
@@ -633,7 +637,6 @@ def get_subjects():
     return jsonify(subject_list)
 
 @app.route("/api/quiz")
-@login_required
 def get_quizzes():
     quizzes= Quiz.query.all()
     quiz_list=[]
