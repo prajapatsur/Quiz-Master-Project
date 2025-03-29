@@ -2,79 +2,50 @@
 {% block title %}Add Chapter{% endblock title %}
 
 {% block head %}
-    <style>
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
-            gap: 10px;
-            padding: 5px;
-        }
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-        .container ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: left;
-        }
-
-        .container li {
-            margin-right: 10px;
-        }
-    </style>
 {% endblock head %}
 
-{% block header2 %}
-    <div class="container">
-        <ul>
-            <li><a href="{{ url_for('admin_manage_chapter') }}">Manage Chapters</a></li>
-            <li><a href="{{ url_for('admin_manage_quiz') }}">Manage Quizzes</a></li>
-            <li><a href="{{ url_for('admin_manage_subject') }}">Manage Subjects</a></li>
-            <li><a href="{{ url_for('admin_manage_user') }}">Manage Users</a></li>
-        </ul>
-    </div>
-{% endblock header2 %}
 
 {% block content %}
-<h2>Add Chapter</h2>
-<form method="post">
+  <h1>Add Chapter</h1>
+  <form method="post">
     {{ form.hidden_tag() }}
     <div>
-        {{ form.name.label }}
-        {{ form.name }}
-        {% if form.name.errors %}
+      {{ form.name.label }}
+      {{ form.name }}
+      {% if form.name.errors %}
         <ul class="errors">
-            {% for error in form.name.errors %}
+          {% for error in form.name.errors %}
             <li>{{ error }}</li>
-            {% endfor %}
+          {% endfor %}
         </ul>
-        {% endif %}
+      {% endif %}
     </div>
     <div>
-        {{ form.description.label }}
-        {{ form.description }}
-        {% if form.description.errors %}
+      {{ form.description.label }}
+      {{ form.description }}
+      {% if form.description.errors %}
         <ul class="errors">
-            {% for error in form.description.errors %}
+          {% for error in form.description.errors %}
             <li>{{ error }}</li>
-            {% endfor %}
+          {% endfor %}
         </ul>
-        {% endif %}
+      {% endif %}
     </div>
     <div>
-        {{ form.subject_id.label }}
-        {{ form.subject_id }}
-        {% if form.subject_id.errors %}
+      {{ form.subject_id.label }}
+      {{ form.subject_id }}
+      {% if form.subject_id.errors %}
         <ul class="errors">
-            {% for error in form.subject_id.errors %}
+          {% for error in form.subject_id.errors %}
             <li>{{ error }}</li>
-            {% endfor %}
+          {% endfor %}
         </ul>
-        {% endif %}
+      {% endif %}
     </div>
     <div>
-        {{ form.submit }}
+      {{ form.submit }}
     </div>
-</form>
+  </form>
 {% endblock content %}

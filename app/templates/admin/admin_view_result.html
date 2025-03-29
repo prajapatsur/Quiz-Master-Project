@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}View Results{% endblock title %}
+
+{% block content %}
+<h3>All attempts for quiz: {{quiz.name}}</h3>
+
+<div>
+    <p>All Attempts</p>
+    <table>
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Time of attempt</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in scores %}
+            <tr>
+                <td>{{ s.user.fullname }}</td>
+                <td>{{ s.timestamp }}</td>
+                <td>{{s.total_scored }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

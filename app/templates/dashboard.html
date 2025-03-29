@@ -17,16 +17,16 @@
     </form>
 </div>
 
-<div>
+<div class="progress-summary">
     <h3>Progress Summary</h3>
     <table>
         <tbody>
             <tr>
                 <td>Total Attempted Quizzes</td>
-                {% if total_attempted_quizzes>0 %}
+                {% if total_attempted_quizzes > 0 %}
                 <td>{{ total_attempted_quizzes }}</td>
                 {% else %}
-                <td>You didn't attempted any quiz.</td>
+                <td>You didn't attempt any quiz.</td>
                 {% endif %}
             </tr>
             <tr>
@@ -37,31 +37,40 @@
     </table>
 </div>
 
+<div class="chart-container">
+    <h3>Quiz Performance Summary</h3>
+    <canvas id="quizPerformanceChart"></canvas>
+</div>
+
+<div class="chart-container">
+    <h3>Quiz Attempt Summary</h3>
+    <canvas id="quizAttemptChart"></canvas>
+</div>
+
 <br>
 
 <div>
     <h3>List of Subjects:</h3>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Subject ID</th>
-                    <th>Subject Name</th>
-                    <th>Description</th>
-                    <th>Chapters</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for s in subjects %}
-                <tr>
-                    <td>{{ s.id }}</td>
-                    <td>{{ s.name }}</td>
-                    <td>{{ s.description }}</td>
-                    <td><a href="{{ url_for('view_chapters', sid=s.id)}}">Chapters</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <table>
+        <thead>
+            <tr>
+                <th>Subject ID</th>
+                <th>Subject Name</th>
+                <th>Description</th>
+                <th>Chapters</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in subjects %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.description }}</td>
+                <td><a href="{{ url_for('view_chapters', sid=s.id)}}">Chapters</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 <br>
 <div>
@@ -122,17 +131,52 @@
     </table>
 </div>
 
-<div>
+<div class="footer-links">
     <br>
     <a href="{{ url_for('get_subjects')}}">Get Subjects (API)</a>
-    <br>
     <a href="{{ url_for('get_quizzes')}}">Get Quizzes (API)</a>
-    <br>
     <a href="{{ url_for('get_scores')}}">Get Scores (API)</a>
-    <br>
     <a href="{{ url_for('results', user_id=current_user.id) }}">All Results</a>
-    <br>
     <a href="{{ url_for('select_quiz') }}">Select Quiz</a>
 </div>
 
 {% endblock content %}
+
+{% block footer %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let ctx1 = document.getElementById("quizPerformanceChart").getContext("2d");
+        let ctx2 = document.getElementById("quizAttemptChart").getContext("2d");
+
+        let quizLabels = {{ scores | map(attribute='id') | list | tojson }};
+        let quizScores = {{ scores | map(attribute='total_scored') | list | tojson }};
+        
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: quizLabels,
+                datasets: [{
+                    label: 'Quiz Scores',
+                    data: quizScores,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ['Attempted', 'Not Attempted'],
+                datasets: [{
+                    data: [{{ total_attempted_quizzes }}, {{ quizzes|length - total_attempted_quizzes }}],
+                    backgroundColor: ['#28a745', '#dc3545']
+                }]
+            },
+            options: { responsive: true }
+        });
+    });
+</script>
+{% endblock footer %}

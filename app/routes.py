@@ -172,7 +172,28 @@ def admin_dashboard():
         flash("Permission required to access admin dashboard.", category="error")
         return render_template("home.html")
     quizzes= Quiz.query.all()
-    return render_template("admin/dashboard.html", quizzes=quizzes)
+    quiz_names = [quiz.name for quiz in quizzes]
+    average_scores = []
+    completion_rates = []
+
+    for quiz in quizzes:
+        scores = Score.query.filter_by(quiz_id=quiz.id).all()
+        if scores:
+            average_score = sum([s.total_scored for s in scores]) / len(scores)
+
+            users_attempted = len(scores)
+            completion_rate = (users_attempted / (User.query.count() - 1)) * 100
+        else:
+           average_score = 0 
+           completion_rate = 0
+        average_scores.append(average_score)
+        completion_rates.append(completion_rate)
+    return render_template("admin/dashboard.html",
+                           quizzes=quizzes,
+                           quiz_names=quiz_names,
+                           average_scores=average_scores,
+                           completion_rates=completion_rates
+                        )
 
 #Admin Manages
 @app.route("/admin/manage_subjects", methods=['GET','POST'])
@@ -262,6 +283,16 @@ def admin_view_quiz(cid):
         return render_template("home.html")
     quizzes= Quiz.query.filter_by(chapter_id=cid)
     return render_template("admin/admin_view_quiz.html", cid=cid, quizzes=quizzes)
+
+@app.route("/admin/view_result/<int:qid>")
+@login_required
+def admin_view_result(qid):
+    if current_user.username != "admin@gmail.com":
+        flash("Permission required!", category="error")
+        return render_template("home.html")
+    results= Score.query.filter_by(quiz_id=qid).all()
+    quiz= Quiz.query.filter_by(id=qid).first()
+    return render_template("admin/admin_view_result.html", scores=results, quiz=quiz)
 
 #add, edit and delete subject
 @app.route("/admin/add_subject", methods=['GET', 'POST'])
@@ -571,6 +602,8 @@ def select_quiz():
                         quizzes=quizzes
                     )
 
+
+#API Endpoints
 @app.route("/api/subject")
 @login_required
 def get_subjects():

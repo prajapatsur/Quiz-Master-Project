@@ -1,85 +1,90 @@
 {% extends "layout.html" %}
 {% block title %}Add Question{% endblock %}
 
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
+{% endblock head %}
 
 {% block content %}
-<h1>Quiz name: {{ quiz.name }}</h1>
- <h2>Add Question for Quiz_id:{{ quiz.id }}</h2>
- <form method="post">
-     {{ form.hidden_tag() }}
-     <div>
-         {{ form.question_statement.label }}
-         {{ form.question_statement }}
-         {% if form.question_statement.errors %}
-         <ul class="errors">
-             {% for error in form.question_statement.errors %}
-             <li>{{ error }}</li>
-             {% endfor %}
-         </ul>
-         {% endif %}
-     </div>
-     <div>
-         {{ form.option1.label }}
-         {{ form.option1 }}
-         {% if form.option1.errors %}
-         <ul class="errors">
-             {% for error in form.option1.errors %}
-             <li>{{ error }}</li>
-             {% endfor %}
-         </ul>
-         {% endif %}
-     </div>
-     <div>
-         {{ form.option2.label }}
-         {{ form.option2 }}
-         {% if form.option2.errors %}
-         <ul class="errors">
-             {% for error in form.option2.errors %}
-             <li>{{ error }}</li>
-             {% endfor %}
-         </ul>
-         {% endif %}
-     </div>
-     <div>
-         {{ form.option3.label }}
-         {{ form.option3 }}
-         {% if form.option3.errors %}
-         <ul class="errors">
-             {% for error in form.option3.errors %}
-             <li>{{ error }}</li>
-             {% endfor %}
-         </ul>
-         {% endif %}
-     </div>
-     <div>
-         {{ form.option4.label }}
-         {{ form.option4 }}
-         {% if form.option4.errors %}
-         <ul class="errors">
-             {% for error in form.option4.errors %}
-             <li>{{ error }}</li>
-             {% endfor %}
-         </ul>
-         {% endif %}
-     </div>
-     <div>
-         {{ form.correct_option.label }}
-         {{ form.correct_option }}
-         {% if form.correct_option.errors %}
-         <ul class="errors">
-             {% for error in form.correct_option.errors %}
-             <li>{{ error }}</li>
-             {% endfor %}
-         </ul>
-         {% endif %}
-     </div>
-     <div>
-         {{ form.submit }}
-     </div>
- </form>
- {% endblock %}
+  <div class="add-question-container">
+    <h1 class="add-question-title">Quiz name: {{ quiz.name }}</h1>
+    <h2 class="add-question-subtitle">Add Question for Quiz_id:{{ quiz.id }}</h2>
+    <form method="post" class="add-question-form">
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        {{ form.question_statement.label(class="form-label") }}
+        {{ form.question_statement(class="form-input") }}
+        {% if form.question_statement.errors %}
+          <ul class="errors">
+            {% for error in form.question_statement.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.option1.label(class="form-label") }}
+        {{ form.option1(class="form-input") }}
+        {% if form.option1.errors %}
+          <ul class="errors">
+            {% for error in form.option1.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.option2.label(class="form-label") }}
+        {{ form.option2(class="form-input") }}
+        {% if form.option2.errors %}
+          <ul class="errors">
+            {% for error in form.option2.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.option3.label(class="form-label") }}
+        {{ form.option3(class="form-input") }}
+        {% if form.option3.errors %}
+          <ul class="errors">
+            {% for error in form.option3.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.option4.label(class="form-label") }}
+        {{ form.option4(class="form-input") }}
+        {% if form.option4.errors %}
+          <ul class="errors">
+            {% for error in form.option4.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.correct_option.label(class="form-label") }}
+        {{ form.correct_option(class="form-select") }}
+        {% if form.correct_option.errors %}
+          <ul class="errors">
+            {% for error in form.correct_option.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.submit(class="form-submit") }}
+      </div>
+    </form>
+  </div>
+{% endblock %}
 
- {% block footer %}
- <div><a href="{{ url_for('admin_manage_quiz') }}">Back</a></div>
- {% endblock footer %}
+{% block footer %}
+  <div class="footer-back-link"><a href="{{ url_for('admin_manage_quiz') }}">Back</a></div>
+{% endblock footer %}

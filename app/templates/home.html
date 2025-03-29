@@ -2,10 +2,9 @@
 {% block title %}HomePage{% endblock %}
 
 {% block content %}
-<p>HomePage</p>
 <h1>Welcome to the Quiz Master!</h1>
 {% if current_user.is_authenticated %}
-<div>
+<div class="footer-links">
     {% if current_user.username == "admin@gmail.com" %}
         <a href="{{url_for('admin_dashboard')}}">Admin Dashboard</a>
     {% else %}

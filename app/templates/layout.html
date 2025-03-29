@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     {% block head %}
-    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <link rel="stylesheet" href="static/css/style.css" />
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
@@ -17,24 +17,23 @@
             </ul>
         {% endif %}
     {% endwith %}
-
-    <ul>
-        <li><a href="{{ url_for('home') }}">Home</a></li>    
+<div class="taskbar">
+    <a href="{{ url_for('home') }}">Home</a>    
         <!-- we will go to "http://127.0.0.1:5000/home" when we click on Home -->
         {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('logout') }}">Logout</a></li> 
+            <a href="{{ url_for('logout') }}">Logout</a> 
         {% else %}
-            <li><a href="register">Register</a></li>    
+            <a href="register">Register</a>    
             <!-- we will go to "http://127.0.0.1.5000/register" when we click on Register -->
-            <li><a href="{{ url_for('login') }}">Login</a></li> 
-            <!-- similar will happen here -->
+            <a href="{{ url_for('login') }}">Login</a>
         {% endif %}
     </ul>
+</div>
 
-    <div id="header">{% block header2 %}{% endblock %}</div>
+<div id="header">{% block header2 %}{% endblock %}</div>
 
-    <div id="content">{% block content %}{% endblock %}</div>
-    
-    <div id="footer">{% block footer %}{% endblock %}</div>
+<div id="content">{% block content %}{% endblock %}</div>
+
+<div id="footer">{% block footer %}{% endblock %}</div>
 </body>
 </html>
