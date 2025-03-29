@@ -123,6 +123,13 @@
 </div>
 
 <div>
+    <br>
+    <a href="{{ url_for('get_subjects')}}">Get Subjects (API)</a>
+    <br>
+    <a href="{{ url_for('get_quizzes')}}">Get Quizzes (API)</a>
+    <br>
+    <a href="{{ url_for('get_scores')}}">Get Scores (API)</a>
+    <br>
     <a href="{{ url_for('results', user_id=current_user.id) }}">All Results</a>
     <br>
     <a href="{{ url_for('select_quiz') }}">Select Quiz</a>

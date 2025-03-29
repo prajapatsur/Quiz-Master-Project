@@ -58,3 +58,14 @@
             </table>
     </div>
 {% endblock %}
+
+{% block footer %}
+<div>
+    <br>
+    <a href="{{ url_for('get_subjects')}}">Get Subjects (API)</a>
+    <br>
+    <a href="{{ url_for('get_quizzes')}}">Get Quizzes (API)</a>
+    <br>
+    <a href="{{ url_for('get_scores')}}">Get Scores (API)</a>
+</div>
+{% endblock footer %}

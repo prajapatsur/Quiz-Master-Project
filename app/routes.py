@@ -1,5 +1,5 @@
 from app import create_app, db, login_manager
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from app.forms import RegisterForm, LoginForm, SubjectForm, ChapterForm, QuizForm, QuestionForm
 from app.models import User, Subject, Chapter, Quiz, Question, Score
 from flask_login import login_user, login_required, logout_user, current_user
@@ -571,3 +571,65 @@ def select_quiz():
                         quizzes=quizzes
                     )
 
+@app.route("/api/subject")
+@login_required
+def get_subjects():
+    subjects= Subject.query.all()
+    subject_list=[]
+    for sub in subjects:
+        subject={
+                        "id": sub.id,
+                        "name":sub.name,
+                        "description":sub.description
+        }
+        subject_list.append(subject)
+    return jsonify(subject_list)
+
+@app.route("/api/quiz")
+@login_required
+def get_quizzes():
+    quizzes= Quiz.query.all()
+    quiz_list=[]
+    for q in quizzes:
+        quiz={
+                        "Id": q.id,
+                        "Quiz Name":q.name,
+                        "Chapter_id":q.chapter_id,
+                        "Date_of_quiz":q.date_of_quiz,
+                        "Time_duration":q.time_duration
+        }
+        quiz_list.append(quiz)
+    return jsonify(quiz_list)
+
+@app.route("/api/score")
+@login_required
+def get_scores():
+    if current_user.username=="admin@gmail.com":
+        scores= Score.query.all()
+        score_list=[]
+        for s in scores:
+            quiz= s.quiz
+            score={
+                            "Attempt Id": s.id,
+                            "Quiz Name":quiz.name,
+                            "total_scored":s.total_scored,
+                            "Time of attempt":s.timestamp,
+                            "Date of Quiz":quiz.date_of_quiz,
+                            "User ID": s.user_id
+            }
+            score_list.append(score)
+        return jsonify(score_list)
+    else:
+        scores= Score.query.filter_by(user_id=current_user.id).all()
+        score_list=[]
+        for s in scores:
+            quiz= s.quiz
+            score={
+                            "Attempt Id": s.id,
+                            "Quiz Name":quiz.name,
+                            "total_scored":s.total_scored,
+                            "Time of attempt":s.timestamp,
+                            "Date of Quiz":quiz.date_of_quiz
+            }
+            score_list.append(score)
+        return jsonify(score_list)
