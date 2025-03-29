@@ -17,21 +17,23 @@
     </form>
 </div>
 
-<div class="progress-summary">
-    <h3>Progress Summary</h3>
-    <table>
-        <tbody>
-            <tr>
-                <td>Total Attempted Quizzes</td>
-                {% if total_attempted_quizzes > 0 %}
-                <td>{{ total_attempted_quizzes }}</td>
-                {% else %}
-                <td>You didn't attempt any quiz.</td>
-                {% endif %}
+<div class="progress-summary" style="border-radius: 8px;">
+    <h3 style="color: rgb(6, 132, 44);">Progress Summary</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background-color: #003366; color: white;">
+                <td style="padding: 10px; text-align: left;">Total Attempted Quizzes</td>
+                <td style="padding: 10px; text-align: left;">Average Score</td>
             </tr>
-            <tr>
-                <td>Average Score</td>
-                <td>{{ average_score|round(3) }}</td>
+        </thead>
+        <tbody>
+            <tr style="color: rgb(26, 12, 12);">
+                {% if total_attempted_quizzes > 0 %}
+                    <td style="padding: 10px; text-align: center;">{{ total_attempted_quizzes }}</td>
+                {% else %}
+                    <td style="padding: 10px; text-align: center;">You didn't attempt any quiz.</td>
+                {% endif %}
+                <td style="padding: 10px; text-align: center;">{{ average_score|round(3) }}</td>
             </tr>
         </tbody>
     </table>
@@ -43,8 +45,8 @@
 </div>
 
 <div class="chart-container">
-    <h3>Quiz Attempt Summary</h3>
-    <canvas id="quizAttemptChart"></canvas>
+    <h3>Leaderboard Chart</h3>
+    <canvas id="leaderboardchart"></canvas>
 </div>
 
 <br>
@@ -148,7 +150,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         let ctx1 = document.getElementById("quizPerformanceChart").getContext("2d");
-        let ctx2 = document.getElementById("quizAttemptChart").getContext("2d");
+        let ctx2 = document.getElementById("leaderboardchart").getContext("2d");
 
         let quizLabels = {{ scores | map(attribute='quiz.name') | list | tojson }};
         let quizScores = {{ scores | map(attribute='total_scored') | list | tojson }};
@@ -167,16 +169,20 @@
         });
 
         new Chart(ctx2, {
-            type: 'pie',
-            data: {
-                labels: ['Attempted', 'Not Attempted'],
-                datasets: [{
-                    data: [{{ total_attempted_quizzes }}, {{ quizzes|length - total_attempted_quizzes }}],
-                    backgroundColor: ['#28a745', '#dc3545']
-                }]
-            },
-            options: { responsive: true }
-        });
+    type: 'bar',
+    data: {
+        labels: {{ fullnames|tojson }},
+        datasets: [{
+            label: 'Total Scores',
+            data: {{ user_total_scores|tojson }},
+            backgroundColor: ['#28a745']
+        }]
+    },
+    options: { responsive: true,
+               indexAxis: 'y'
+     }
+});
+
     });
 </script>
 {% endblock footer %}

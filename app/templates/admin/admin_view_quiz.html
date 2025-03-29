@@ -50,7 +50,6 @@
   <div class="footer-links">
     <br>
     <a href="{{ url_for('admin_add_quiz') }}">Add Quiz</a>
-    <br>
-    <a href="{{ url_for('admin_view_chapter', sid=quizzes[0].chapter_id) }}">Back</a>
+    <a href="{{ url_for('admin_manage_chapter') }}">Back</a>
   </div>
 {% endblock footer %}

@@ -62,9 +62,10 @@
 
 {% block footer %}
 <br>
-<span><a href="{{ url_for('results', user_id=current_user.id) }}">All Results</a></span>
-<br>
-<span><a href="{{ url_for('dashboard') }}">Back</a></span>
+<div class="footer-links">
+    <span><a href="{{ url_for('results', user_id=current_user.id) }}">All Results</a></span>
+    <span><a href="{{ url_for('dashboard') }}">Back</a></span>
+</div>
 <!-- <script>
     document.getElementById('subject_id').addEventListener('change', function () {
         subjectId = this.value;

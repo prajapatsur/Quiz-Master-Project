@@ -23,7 +23,7 @@ class Subject(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
 
-    chapters = db.relationship('Chapter', backref='subject', lazy=True)
+    chapters = db.relationship('Chapter', backref='subject', lazy=True, cascade="all, delete-orphan")
 
 class Chapter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,7 +31,7 @@ class Chapter(db.Model):
     description = db.Column(db.Text)
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
 
-    quizzes = db.relationship('Quiz', backref='chapter', lazy=True)
+    quizzes = db.relationship('Quiz', backref='chapter', lazy=True,cascade="all, delete-orphan")
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,8 +40,8 @@ class Quiz(db.Model):
     time_duration = db.Column(db.Integer, nullable=False)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=False)
 
-    questions = db.relationship('Question', backref='quiz', lazy=True)
-    score= db.relationship('Score', backref= 'quiz', lazy=True)
+    questions = db.relationship('Question', backref='quiz', lazy=True, cascade="all, delete-orphan")
+    score= db.relationship('Score', backref= 'quiz', lazy=True, cascade="all, delete-orphan")
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)

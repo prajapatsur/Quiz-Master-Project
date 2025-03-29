@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% block title %}Admin View Chapters{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock head %}
+
 {% block content %}
 <h1>Chapters for Subject-ID {{sid}}</h1>
 <table>
@@ -23,18 +27,24 @@
                 <br>
                 <a href="{{ url_for('admin_delete_chapter', id=chapter.id) }}">Delete</a>
                 <br>
+                {% if chapter_quiz_count[chapter.id] > 0 %}
                 <a href="{{ url_for('admin_view_quiz', cid=chapter.id)}}">Quizzes</a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<a href="{{ url_for('admin_add_chapter') }}">Add Chapter</a>
+
 <br>
 {% endblock content %}
 
 {% block footer %}
 <br>
-<a href="{{ url_for('admin_manage_subject') }}">Back</a>
+<div class="footer-links">
+    <a href="{{ url_for('admin_add_chapter') }}">Add Chapter</a>
+    <a href="{{ url_for('admin_manage_subject') }}">Back</a>
+</div>
+
 {% endblock footer %}

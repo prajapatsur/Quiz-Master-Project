@@ -103,10 +103,27 @@ def dashboard():
     # username = session.get('username', 'User')  # Retrieve username from session
     # return render_template("dashboard.html", username=username)    #used with session['username']
 
+    #leaderboard
+    users= User.query.filter(User.username != os.getenv('admin_username')).all()
+    leaderboard_data=[]
+
+    for user in users:
+        scores= Score.query.filter_by(user_id=user.id).all()
+        total_scored= sum([s.total_scored for s in scores])
+        leaderboard_data.append({
+            "user_fullname": user.fullname,
+            "score": total_scored
+        })
+    leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
+    fullnames= [x["user_fullname"] for x in leaderboard_data]
+    user_total_scores= [x["score"] for x in leaderboard_data]  
+
     quizzes= Quiz.query.all()
     subjects= Subject.query.all()
     chapters= Chapter.query.all()
     scores= Score.query.filter_by(user_id=current_user.id).all()
+
+    #average score
     total_attempted_quizzes= len(scores)
     if total_attempted_quizzes>0:
         average_score= sum([s.total_scored for s in scores])/total_attempted_quizzes
@@ -125,7 +142,10 @@ def dashboard():
                            chapters=chapters,
                            scores=scores,
                            total_attempted_quizzes=total_attempted_quizzes,
-                           average_score=average_score)
+                           average_score=average_score,
+                           leaderboard_data=leaderboard_data,
+                           fullnames=fullnames,
+                           user_total_scores=user_total_scores)
 
 #User Chapter view for specific subject-id
 @app.route("/view_chapters/<int:sid>", methods=['POST','GET'])
@@ -173,7 +193,7 @@ def admin_login():
     return render_template("admin/login.html", form=form)
 
 #Admin Dashboard
-@app.route("/admin/dashboard")
+@app.route("/admin/dashboard", methods=['GET','POST'])
 @login_required
 def admin_dashboard():
     if current_user.username != os.getenv('admin_username'):
@@ -287,7 +307,8 @@ def admin_view_chapter(sid):
         flash("Permission required!", category="error")
         return render_template("home.html")
     chapters= Chapter.query.filter_by(subject_id=sid)
-    return render_template("admin/admin_view_chapter.html", chapters=chapters, sid=sid)
+    chapter_quiz_count = {chapter.id: Quiz.query.filter_by(chapter_id=chapter.id).count() for chapter in chapters}
+    return render_template("admin/admin_view_chapter.html", chapters=chapters, sid=sid, chapter_quiz_count=chapter_quiz_count)
 
 #admin_view_quiz--> Admin can view quizzes for specific chapter
 @app.route("/admin/view_quiz/<int:cid>")
@@ -296,7 +317,7 @@ def admin_view_quiz(cid):
     if current_user.username != os.getenv('admin_username'):
         flash("Permission required!", category="error")
         return render_template("home.html")
-    quizzes= Quiz.query.filter_by(chapter_id=cid)
+    quizzes= Quiz.query.filter_by(chapter_id=cid).all()
     return render_template("admin/admin_view_quiz.html", cid=cid, quizzes=quizzes)
 
 @app.route("/admin/view_result/<int:qid>")
@@ -425,17 +446,24 @@ def admin_edit_chapter(id):
         return redirect(url_for("admin_manage_chapter"))
     return render_template("admin/edit_chapter.html", form=form)
 
-@app.route("/admin/delete_chapter/<int:id>", methods=['GET','POST'])    #I realised that this get is needed here
+@app.route("/admin/delete_chapter/<int:id>", methods=['GET', 'POST'])
 @login_required
 def admin_delete_chapter(id):
     if current_user.username != os.getenv('admin_username'):
         flash("Permission required to delete chapter!", category="error")
         return redirect(url_for("home"))
+
     chapter = Chapter.query.get_or_404(id)
+    quizzes = Quiz.query.filter_by(chapter_id=id).all()
+    for quiz in quizzes:
+        Question.query.filter_by(quiz_id=quiz.id).delete()
+        db.session.delete(quiz)
     db.session.delete(chapter)
     db.session.commit()
-    flash("Chapter deleted successfully!", category="success")
+
+    flash("Chapter and its associated quizzes deleted successfully!", category="success")
     return redirect(url_for("admin_manage_chapter"))
+
 
 
 #add, edit and delete quiz
@@ -487,6 +515,8 @@ def admin_delete_quiz(id):
         flash("Permission required to Add Quiz.", category="error")
         return redirect(url_for('home'))
     quiz= Quiz.query.get_or_404(id)
+
+    questions= Question.query.filter_by(quiz_id=id).delete()
     db.session.delete(quiz)
     db.session.commit()
     flash("Quiz deleted!", category='success')
