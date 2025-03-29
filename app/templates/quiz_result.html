@@ -1,37 +1,42 @@
 {% extends "layout.html" %}
 {% block title %}Quiz {{quiz.id}} Result{% endblock %}
 
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock head %}
+
 {% block content %}
 <h2>Quiz Results</h2>
-<h3>Welcome {{user.fullname}}</h3>
+<h3>Welcome {{ user.fullname }}</h3>
 
 <div>
-    <table>
-        <thead>
-            <tr>
-                <th>Quiz ID</th>
-                <th>Quiz name</th>
-                <th>Attempt ID</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for s in score %}
-            <tr>
-                <td>{{ quiz.id }}</td>
-                <td>{{ quiz.name }}</td>
-                <td>{{ s.id }}</td>
-                <td>{{ s.total_scored }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Quiz ID</th>
+        <th>Quiz name</th>
+        <th>Attempt ID</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in score %}
+        <tr>
+          <td>{{ quiz.id }}</td>
+          <td>{{ quiz.name }}</td>
+          <td>{{ s.id }}</td>
+          <td>{{ s.total_scored }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}
 
 {% block footer %}
-<br>
-<div>
-    <a href="{{url_for('dashboard')}}">Back</a>
+<div class="footer-links">
+  <br>
+  <a href="{{ url_for('dashboard') }}">Back</a>
 </div>
 {% endblock footer %}

@@ -86,5 +86,5 @@
 {% endblock %}
 
 {% block footer %}
-  <div class="footer-back-link"><a href="{{ url_for('admin_manage_quiz') }}">Back</a></div>
+  <div class="footer-links"><a href="{{ url_for('admin_manage_quiz_question', qid=quiz.id) }}">Back</a></div>
 {% endblock footer %}

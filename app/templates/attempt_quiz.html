@@ -1,70 +1,69 @@
 {% extends "layout.html" %}
 {% block title %}Attempt Quiz: {{quiz.name}}{% endblock %}
 
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .option {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 15px;
+    }
+    .option input {
+      margin-right: 5px;
+    }
+  </style>
+{% endblock head %}
+
 {% block content %}
-<h2>{{quiz.name}}</h2>
-<h4>Hello {{user.fullname}}</h4>
+  <h2>{{ quiz.name }}</h2>
+  <h4>Hello {{ user.fullname }}</h4>
 
-<!-- Timer Display -->
-<div>
+  <div>
     <h3>Time Remaining: <span id="timer"></span></h3>
-</div>
+  </div>
 
-<form id="quizForm" method="post">
+  <form id="quizForm" method="post">
     <div>
-        {% for question in questions %}
+      {% for question in questions %}
         <div>
-            <h3>Q:{{ question.question_statement }}</h3>
-            <span>Choose answer:</span>
-            <div>
-                <input type="radio" name="question_{{ question.id }}" value="1">
-                <label>{{ question.option1 }}</label>
-            </div>
-            <div>
-                <input type="radio" name="question_{{ question.id }}" value="2">
-                <label>{{ question.option2 }}</label>
-            </div>
-            <div>
-                <input type="radio" name="question_{{ question.id }}" value="3">
-                <label>{{ question.option3 }}</label>
-            </div>
-            <div>
-                <input type="radio" name="question_{{ question.id }}" value="4">
-                <label>{{ question.option4 }}</label>
-            </div>
+          <h3>Q: {{ question.question_statement }}</h3>
+          <div class="options">
+            <label class="option"><input type="radio" name="question_{{ question.id }}" value="1"> {{ question.option1 }}</label>
+            <label class="option"><input type="radio" name="question_{{ question.id }}" value="2"> {{ question.option2 }}</label>
+            <label class="option"><input type="radio" name="question_{{ question.id }}" value="3"> {{ question.option3 }}</label>
+            <label class="option"><input type="radio" name="question_{{ question.id }}" value="4"> {{ question.option4 }}</label>
+          </div>
         </div>
-        {% endfor %}
+      {% endfor %}
     </div>
     <button type="submit" onclick="return confirm('Do you want to submit?')">Submit</button>
-</form>
+  </form>
 
-<script>
-    
-    let quizDuration = {{ quiz.time_duration }}; 
+  <script>
+    let quizDuration = {{ quiz.time_duration }};
     if (quizDuration <= 0) {
-        alert("Quiz duration is invalid. Please contact admin.");
-        window.location.href = "{{ url_for('dashboard') }}"; 
+      alert("Quiz duration is invalid. Please contact admin.");
+      window.location.href = "{{ url_for('dashboard') }}";
     }
 
     let timeLeft = {{ quiz.time_duration }} * 60; // Convert minutes to seconds
     let timerDisplay = document.getElementById("timer");
 
     function updateTimer() {
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-        timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            alert("Time's Up! Quiz will be submitted automatically.")
-            //id is set to 'quizForm' in the form tag so that the submittion can be done automatically
-            document.getElementById("quizForm").submit();
+      let minutes = Math.floor(timeLeft / 60);
+      let seconds = timeLeft % 60;
+      timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-        }
-        timeLeft--;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert("Time's Up! Quiz will be submitted automatically.");
+        document.getElementById("quizForm").submit();
+      }
+      timeLeft--;
     }
-    
+
     let timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
-</script>
+  </script>
 {% endblock %}

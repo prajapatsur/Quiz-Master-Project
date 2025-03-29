@@ -37,9 +37,9 @@
           <td>{{ subject.name }}</td>
           <td>{{ subject.description }}</td>
           <td>
-            <a href="{{ url_for('admin_edit_subject', id=subject.id) }}">Edit</a>
-            <a href="{{ url_for('admin_delete_subject', id=subject.id) }}">Delete</a>
-            <a href="{{ url_for('admin_view_chapter', sid=subject.id) }}">Chapters</a>
+            <a href="{{ url_for('admin_edit_subject', id=subject.id) }}">Edit</a><br>
+            <a href="{{ url_for('admin_delete_subject', id=subject.id) }}">Delete</a><br>
+            <a href="{{ url_for('admin_view_chapter', sid=subject.id) }}">Chapters</a><br>
           </td>
         </tr>
       {% endfor %}

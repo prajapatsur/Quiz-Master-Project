@@ -1,47 +1,56 @@
 {% extends "layout.html" %}
 {% block title %}Admin View Quiz{% endblock %}
 
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock head %}
+
 
 {% block content %}
-<h1>Quizzes for Chapter-ID {{cid}}</h1>
+  <h1>Quizzes for Chapter-ID {{ cid }}</h1>
 
-<!-- Search form -->
-<form method="POST">
+  <!-- Search form -->
+  <form method="POST">
     <input type="text" name="query" placeholder="Search Quiz" value="{{ query }}">
     <button type="submit">Search</button>
-</form>
+  </form>
 
-<table>
-<thead>
-    <tr>
+  <table>
+    <thead>
+      <tr>
         <th>ID</th>
         <th>Name</th>
         <th>Quiz Date</th>
         <th>Time Duration</th>
         <th>Actions</th>
-    </tr>
-</thead>
-<tbody>
-    {% for quiz in quizzes %}
-    <tr>
-        <td>{{ quiz.id }}</td>
-        <td>{{ quiz.name }}</td>
-        <td>{{ quiz.date_of_quiz }}</td>
-        <td>{{ quiz.time_duration }}</td>
-        <td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for quiz in quizzes %}
+        <tr>
+          <td>{{ quiz.id }}</td>
+          <td>{{ quiz.name }}</td>
+          <td>{{ quiz.date_of_quiz }}</td>
+          <td>{{ quiz.time_duration }}</td>
+          <td>
             <a href="{{ url_for('admin_edit_quiz', id=quiz.id) }}">Edit</a><br>
             <a href="{{ url_for('admin_delete_quiz', id=quiz.id) }}">Delete</a><br>
-            <a href="{{ url_for('admin_manage_quiz_question', qid= quiz.id) }}">Questions</a>
-        </td>
-    </tr>
-    {% endfor %}
-</tbody>
-<div>
-<a href="{{ url_for('admin_add_quiz') }}">Add Quiz</a>
-</div>
+            <a href="{{ url_for('admin_manage_quiz_question', qid=quiz.id) }}">Questions</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div>
+    
+  </div>
 {% endblock content %}
 
 {% block footer %}
-<br>
-<a href="{{ url_for('admin_view_chapter', sid=quizzes[0].chapter_id) }}">Back</a>
+  <div class="footer-links">
+    <br>
+    <a href="{{ url_for('admin_add_quiz') }}">Add Quiz</a>
+    <br>
+    <a href="{{ url_for('admin_view_chapter', sid=quizzes[0].chapter_id) }}">Back</a>
+  </div>
 {% endblock footer %}

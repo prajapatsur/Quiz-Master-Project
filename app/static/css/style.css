@@ -246,44 +246,63 @@ form {
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #f8f9fa;
-  }
+}
 
-  form div {
+form div {
     margin-bottom: 15px;
-  }
+}
 
-  form label {
+form label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-  }
+}
 
-  form input[type="text"],
-  form textarea,
-  form select {
+form input[type="text"],
+form textarea,
+form select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-  }
+}
 
-  form input[type="submit"] {
+form input[type="submit"] {
     background-color: #007bff;
     color: white;
     padding: 10px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
+}
 
-  form input[type="submit"]:hover {
+form input[type="submit"]:hover {
     background-color: #0056b3;
-  }
+}
 
-  .errors {
+.errors {
     color: red;
     list-style-type: none;
     padding: 0;
     margin-top: 5px;
-  }
+}
+
+/* Flash Message Styling */
+.flash-success {
+    background-color: #a0eab1;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.flash-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}

@@ -150,7 +150,7 @@
         let ctx1 = document.getElementById("quizPerformanceChart").getContext("2d");
         let ctx2 = document.getElementById("quizAttemptChart").getContext("2d");
 
-        let quizLabels = {{ scores | map(attribute='id') | list | tojson }};
+        let quizLabels = {{ scores | map(attribute='quiz.name') | list | tojson }};
         let quizScores = {{ scores | map(attribute='total_scored') | list | tojson }};
         
         new Chart(ctx1, {

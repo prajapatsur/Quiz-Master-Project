@@ -1,38 +1,44 @@
 {% extends "layout.html" %}
 {% block title %}View Chapters{% endblock %}
 
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock head %}
+
 {% block content %}
-<h1>Chapters for Subject-ID {{sid}}</h1>
-<form method="POST">
+  <h1>Chapters for Subject-ID {{ sid }}</h1>
+  <form method="POST">
     <input type="text" name="query" placeholder="Search Quiz" value="{{ query }}">
     <button type="submit">Search</button>
-</form>
-<table>
+  </form>
+  <table>
     <thead>
-        <tr>
-            <th>ID</th>
-            <th>Chapter-Name</th>
-            <th>Description</th>
-            <th>Quizzes</th>
-        </tr>
+      <tr>
+        <th>ID</th>
+        <th>Chapter-Name</th>
+        <th>Description</th>
+        <th>Quizzes</th>
+      </tr>
     </thead>
     <tbody>
-        {% for chapter in chapters %}
+      {% for chapter in chapters %}
         <tr>
-            <td>{{ chapter.id }}</td>
-            <td>{{ chapter.name }}</td>
-            <td>{{ chapter.description }}</td>
-            <td>
-                <a href="{{ url_for('view_quizzes', cid=chapter.id) }}">Quizzes</a>
-            </td>
+          <td>{{ chapter.id }}</td>
+          <td>{{ chapter.name }}</td>
+          <td>{{ chapter.description }}</td>
+          <td>
+            <a href="{{ url_for('view_quizzes', cid=chapter.id) }}">Quizzes</a>
+          </td>
         </tr>
-        {% endfor %}
+      {% endfor %}
     </tbody>
-</table>
-<br>
+  </table>
+  <br>
 {% endblock content %}
 
 {% block footer %}
-<br>
-<a href="{{ url_for('dashboard') }}">Back</a>
+  <div class="footer-links">
+    <br>
+    <a href="{{ url_for('dashboard') }}">Back</a>
+  </div>
 {% endblock footer %}

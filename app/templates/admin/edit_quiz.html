@@ -1,32 +1,25 @@
 {% extends "layout.html" %}
 {% block title %}Edit Quiz{% endblock %}
 
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock head %}
+
 {% block content %}
-<h2>Edit Quiz</h2>
-<form method="post">
+  <h2>Edit Quiz</h2>
+  <form method="post">
     {{ form.hidden_tag() }}
 
     <div>
-        {{ form.name.label }}
-        {{ form.name }}
-        {% if form.name.errors %}
+      {{ form.name.label }}
+      {{ form.name }}
+      {% if form.name.errors %}
         <ul class="errors">
-            {% for error in form.name.errors %}
+          {% for error in form.name.errors %}
             <li>{{ error }}</li>
-            {% endfor %}
+          {% endfor %}
         </ul>
-        {% endif %}
-    </div>
-    <div>
-        {{ form.name.label }}
-        {{ form.name }}
-        {% if form.name.errors %}
-        <ul class="errors">
-            {% for error in form.name.errors %}
-            <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+      {% endif %}
     </div>
     <div>
         {{ form.date_of_quiz.label }}
@@ -51,24 +44,24 @@
         {% endif %}
     </div>
     <div>
-        {{ form.chapter_id.label }}
-        {{ form.chapter_id }}
-        {% if form.chapter_id.errors %}
+      {{ form.chapter_id.label }}
+      {{ form.chapter_id }}
+      {% if form.chapter_id.errors %}
         <ul class="errors">
-            {% for error in form.chapter_id.errors %}
+          {% for error in form.chapter_id.errors %}
             <li>{{ error }}</li>
-            {% endfor %}
+          {% endfor %}
         </ul>
-        {% endif %}
+      {% endif %}
     </div>
     <div>
-        {{ form.submit }}
+      {{ form.submit }}
     </div>
-</form>
+  </form>
 {% endblock %}
 
 {% block footer %}
-<div>
+  <div class="footer-links">
     <a href="{{ url_for('admin_manage_quiz') }}">Back</a>
-</div>
+  </div>
 {% endblock footer %}

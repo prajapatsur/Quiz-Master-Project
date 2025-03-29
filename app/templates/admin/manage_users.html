@@ -17,7 +17,8 @@
         <th>User ID</th>
         <th>Username</th>
         <th>Full Name</th>
-        <th>Password</th>
+        <th>DOB</th>
+        <th>Qualification</th>
       </tr>
     </thead>
     <tbody>
@@ -27,7 +28,8 @@
             <td>{{ user.id }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.fullname }}</td>
-            <td>{{ user.password }}</td>
+            <td>{{user.dob}}</td>
+            <td>{{ user.qualification }}</td>
           </tr>
         {% endif %}
       {% endfor %}

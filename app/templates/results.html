@@ -2,6 +2,10 @@
 
 {% block title %}All results{% endblock title %}
 
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock head %}
+
 {% block content %}
 <h3>Hello {{ current_user.fullname }}</h3>
 <div>
@@ -59,7 +63,7 @@
 </div>
 
 <br>
-<div>
+<div class="footer-links">
     <a href="{{url_for('dashboard')}}">Back</a>
 </div>
 {% endblock content %}
