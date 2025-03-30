@@ -1,12 +1,14 @@
 {% extends "layout.html" %}
 
 {% block title %}View Results{% endblock title %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock head %}
 
 {% block content %}
-<h3>All attempts for quiz: {{quiz.name}}</h3>
+<h1>All attempts for quiz: {{quiz.name}}</h1>
 
 <div>
-    <p>All Attempts</p>
     <table>
         <thead>
             <tr>

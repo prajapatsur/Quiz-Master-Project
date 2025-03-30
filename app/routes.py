@@ -646,7 +646,7 @@ def attempt_quiz(qid):
         db.session.commit()
         flash(f"Your score is {score}", category="success")
         return redirect(url_for("quiz_result", qid= qid, user_id= current_user.id))
-    return render_template("attempt_quiz.html", quiz=quiz, questions=Questions, user=user)    
+    return render_template("attempt_quiz.html", quiz=quiz, questions=Questions, user=user, start_time=start_time, end_time=end_time, current_time=current_time)    
 
 
     

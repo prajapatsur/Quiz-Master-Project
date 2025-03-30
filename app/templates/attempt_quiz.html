@@ -37,33 +37,34 @@
         </div>
       {% endfor %}
     </div>
-    <button type="submit" onclick="return confirm('Do you want to submit?')">Submit</button>
+    <button type="submit">Submit</button>
   </form>
 
   <script>
-    let quizDuration = {{ quiz.time_duration }};
-    if (quizDuration <= 0) {
-      alert("Quiz duration is invalid. Please contact admin.");
-      window.location.href = "{{ url_for('dashboard') }}";
-    }
-
-    let timeLeft = {{ quiz.time_duration }} * 60; // Convert minutes to seconds
+    let endTime = new Date("{{ end_time.isoformat() }}").getTime(); // Convert to milliseconds
     let timerDisplay = document.getElementById("timer");
 
     function updateTimer() {
-      let minutes = Math.floor(timeLeft / 60);
-      let seconds = timeLeft % 60;
-      timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        let now = new Date().getTime();
+        let timeLeft = Math.floor((endTime - now) / 1000);
 
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        alert("Time's Up! Quiz will be submitted automatically.");
-        document.getElementById("quizForm").submit();
-      }
-      timeLeft--;
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (timeLeft < 10) {
+            clearInterval(timerInterval);
+            alert("Time's Up! Quiz will be submitted automatically.\n Click OK immediately, otherwise it will not be submitted.");
+
+            // Delay submission slightly after alert
+            setTimeout(() => {
+                document.getElementById("quizForm").submit();
+            }, 500);
+        }
     }
 
     let timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
   </script>
+
 {% endblock %}
