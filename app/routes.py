@@ -109,15 +109,19 @@ def dashboard():
 
     for user in users:
         scores= Score.query.filter_by(user_id=user.id).all()
-        total_scored= sum([s.total_scored for s in scores])
+        if scores:
+            avg_scored= sum([s.total_scored for s in scores])/len(scores)
+        else:
+            avg_scored=0
         leaderboard_data.append({
             "user_fullname": user.fullname,
-            "score": total_scored
+            "score": avg_scored
         })
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
     fullnames= [x["user_fullname"] for x in leaderboard_data]
-    user_total_scores= [x["score"] for x in leaderboard_data]  
+    user_average_scores= [x["score"] for x in leaderboard_data]  
 
+    #other task
     quizzes= Quiz.query.all()
     subjects= Subject.query.all()
     chapters= Chapter.query.all()
@@ -145,7 +149,7 @@ def dashboard():
                            average_score=average_score,
                            leaderboard_data=leaderboard_data,
                            fullnames=fullnames,
-                           user_total_scores=user_total_scores)
+                           user_average_scores=user_average_scores)
 
 #User Chapter view for specific subject-id
 @app.route("/view_chapters/<int:sid>", methods=['POST','GET'])
@@ -199,9 +203,27 @@ def admin_dashboard():
     if current_user.username != os.getenv('admin_username'):
         flash("Permission required to access admin dashboard.", category="error")
         return render_template("home.html")
+    
+    #leaderboard
+    users= User.query.filter(User.username != os.getenv('admin_username')).all()
+    leaderboard_data=[]
+    for user in users:
+        scores= Score.query.filter_by(user_id=user.id).all()
+        if scores:
+            avg_user_score= sum([s.total_scored for s in scores]) / len(scores)
+        else:
+            avg_user_score= 0
+        leaderboard_data.append({
+            "user_fullname": user.fullname,
+            "score": avg_user_score
+        })
+    leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
+    fullnames= [x["user_fullname"] for x in leaderboard_data]
+    user_average_scores= [x["score"] for x in leaderboard_data]
+
     quizzes= Quiz.query.all()
     quiz_names = [quiz.name for quiz in quizzes]
-    average_scores = []
+    average_quiz_scores = []
     completion_rates = []
 
     for quiz in quizzes:
@@ -214,7 +236,7 @@ def admin_dashboard():
         else:
            average_score = 0 
            completion_rate = 0
-        average_scores.append(average_score)
+        average_quiz_scores.append(average_score)
         completion_rates.append(completion_rate)
 
     #search feature
@@ -225,8 +247,11 @@ def admin_dashboard():
     return render_template("admin/dashboard.html",
                            quizzes=quizzes,
                            quiz_names=quiz_names,
-                           average_scores=average_scores,
-                           completion_rates=completion_rates
+                           average_quiz_scores=average_quiz_scores,
+                           completion_rates=completion_rates,
+                           leaderboard_data=leaderboard_data,
+                           fullnames=fullnames,
+                           user_average_scores=user_average_scores
                         )
 
 #Admin Manages

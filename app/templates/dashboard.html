@@ -169,19 +169,18 @@
         });
 
         new Chart(ctx2, {
-    type: 'bar',
-    data: {
+        type: 'bar',
+        data: {
         labels: {{ fullnames|tojson }},
         datasets: [{
-            label: 'Total Scores',
-            data: {{ user_total_scores|tojson }},
+            label: 'Scores',
+            data: {{ user_average_scores|tojson }},
             backgroundColor: ['#28a745']
-        }]
-    },
-    options: { responsive: true,
-               indexAxis: 'y'
-     }
-});
+                }]
+            },
+            options: { responsive: true,
+                    indexAxis: 'y'}
+        });
 
     });
 </script>
