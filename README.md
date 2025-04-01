@@ -75,7 +75,7 @@ Quiz Master is an interactive web-based quiz management system designed to creat
 - **Quiz** (id, name, date_of_quiz, time_duration, chapter_id)
 - **Users** (id, fullname, username, password)
 - **Score** (id, user_id, quiz_id, total_scored)
-- **Subject** (id, name, description)
+- **Subject** (id, name, description)<br>
 The ER diagram can be seen in the `/app/photos/ER Diagram.png`
 
 
