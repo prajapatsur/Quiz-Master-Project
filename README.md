@@ -61,13 +61,16 @@ Quiz Master is an interactive web-based quiz management system designed to creat
 - Admins can log in and manage quizzes, subjects, chapters, questions, and users.
 - View user performance via interactive graphs and leaderboard rankings.
 - Search for quizzes, chapters, and subjects using the search bar.
+- Admin Dashboard- `/admin/dashboard`
 
 ### User Panel
 - Users can register, log-in, attempt quizzes, and view their performance.
 - Their scores are recorded and displayed on the leaderboard.
 - User can also view all scores at `/results/<int:user_id>`
 - User Dashboard- `/dashboard`
-- Select Quizzes- `/quiz/`
+- Select Quizzes- `/quiz`
+- All Results- `/results/<user_id>`
+- Attempt Quiz- `/quiz/<qid>`   (qid --> quiz_id)
 
 ## Database Schema
 - **Chapter** (id, name, description, subject_id)
