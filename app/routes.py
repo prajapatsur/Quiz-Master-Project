@@ -489,8 +489,6 @@ def admin_delete_chapter(id):
     flash("Chapter and its associated quizzes deleted successfully!", category="success")
     return redirect(url_for("admin_manage_chapter"))
 
-
-
 #add, edit and delete quiz
 @app.route("/admin/add_quiz", methods=['GET', 'POST'])
 @login_required
@@ -648,8 +646,6 @@ def attempt_quiz(qid):
         return redirect(url_for("quiz_result", qid= qid, user_id= current_user.id))
     return render_template("attempt_quiz.html", quiz=quiz, questions=Questions, user=user, start_time=start_time, end_time=end_time, current_time=current_time)    
 
-
-    
 #User Select Quiz 
 @app.route("/quiz", methods=['GET','POST'])
 @login_required

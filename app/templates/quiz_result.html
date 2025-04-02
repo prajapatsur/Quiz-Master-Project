@@ -1,14 +1,23 @@
 {% extends "layout.html" %}
 {% block title %}Quiz {{quiz.id}} Result{% endblock %}
 
-
 {% block head %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .chartcontainer {
+    width: 600px; /* Or any fixed width you prefer */
+    margin: 50px auto; /* Centers the container horizontally and adds top/bottom margin*/
+    padding: 20px; /* Increased padding */
+    background-color: #f2f4f5; /* changed the background color */
+    border-radius: 15px; /* Increased border radius */
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Increased shadow */
+    text-align: center; /* Center the content inside */
+  </style>
 {% endblock head %}
 
 {% block content %}
-<h2>Quiz Results</h2>
 <h3>Welcome {{ user.fullname }}</h3>
+<h2 align="center">Quiz ({{ quiz.name }}) Results</h2>
 
 <div>
   <table>
@@ -17,20 +26,26 @@
         <th>Quiz ID</th>
         <th>Quiz name</th>
         <th>Attempt ID</th>
+        <th>Time of attempt</th>
         <th>Score</th>
       </tr>
     </thead>
     <tbody>
       {% for s in score %}
         <tr>
-          <td>{{ quiz.id }}</td>
-          <td>{{ quiz.name }}</td>
+          <td>{{ s.quiz.id }}</td>
+          <td>{{ s.quiz.name }}</td>
           <td>{{ s.id }}</td>
+          <td>{{ s.timestamp }}</td>
           <td>{{ s.total_scored }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+</div>
+
+<div class="chartcontainer" align="center">
+  <canvas id="scoreChart"></canvas>
 </div>
 {% endblock %}
 
@@ -39,4 +54,56 @@
   <br>
   <a href="{{ url_for('dashboard') }}">Back</a>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let ctx = document.getElementById("scoreChart").getContext("2d");
+
+    // Data for Chart.js
+    let labels = {{ score | map(attribute='id') | list | tojson }}.map((id, index) => (index + 1) + getOrdinal(index + 1));
+    let scores = {{ score | map(attribute='total_scored') | list | tojson }};
+
+    function getOrdinal(n) {
+      let suffixes = ["th", "st", "nd", "rd"];
+      let v = n % 100;
+      return (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
+    }
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Quiz Score Over Attempts',
+          data: scores,
+          borderColor: 'rgb(25, 200, 192)',
+          backgroundColor: 'rgba(255, 150, 10, 0.2)',
+          fill: true,
+          tension: 0.3,
+          pointBackgroundColor: 'rgb(255, 200, 10)',
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Score'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Attempt'
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
 {% endblock footer %}
